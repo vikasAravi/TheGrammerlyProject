@@ -9,44 +9,55 @@
        font-style: italic;
        font-weight: bold;
     }
+    .userattempt {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    .userattempt:hover {
+        font-weight: bold;
+    }
+
+    .table {
+        font-size:1.2em;
+    }
+
+    .topheading {
+        text-align: center;
+        padding:30px;
+        background-color: #dddddd;
+    }
 </style>
-    <div class="card">
-            <div class="card-body d-flex flex-wrap"> 
-                    <div class="container mt-1">
-                            <div class="row">
-                              <div class="col" id="hi">
-                                    Username
-                              </div>
-                              <div class="col" id="hi">
-                                  Rank
-                              </div>
-                              <div class="col" id="hi">
-                                 Score
-                              </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+ <div class="container-fluid topheading">
+        <h1>Leaderboard</h1> 
+        <p>{{question}}</p> 
+</div>
+<div class="container">
+   
+<table id="leaderboard" class="table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Rank</th>
+        <th>Score</th>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+      </tr>
+    </thead>
+    <tbody>
       {% for result in results %}
-      <div class="card">
-            <div class="card-body d-flex flex-wrap">
-            <div class="container mt-1">
-                <div class="row" >
-                <div class="col">
-                    <p onclick="getResults('{{result.0}}')">{{result.0}}</p>
-                    </div>
-                <div class="col">
-                        {{result.1}}
-                </div>
-                <div class="col">
-                        {{result.2}}
-                </div>
-                
-            </div>
-            </div>
-            </div>
-     </div>                
-    {% endfor %}
+      <tr>
+        <td class="userattempt" onclick = "getResults('{{result.0}}')">{{result.0}}</td>
+        <td>{{result.1}}</td>
+        <td>{{result.2}}</td>
+        <td>{{result.3}}</td>
+        <td>{{result.4}}</td>
+        <td>{{result.5}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>       
+</div>
     <div class="modal fade" id="myModal" role="dialog">
         <div class="modal-dialog modal-lg">
         
@@ -65,5 +76,12 @@
     {% include "footer.html" %}
     <script src="{% static "displayresults.js" %}"></script>
     <script src="{% static "retrieveresults.js" %}"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#leaderboard').DataTable();
+        } );
+    </script>
 </body>
     </html>

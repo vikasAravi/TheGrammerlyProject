@@ -4,7 +4,14 @@
 <link rel="stylesheet" href="{% static "answer.css"%}"/>
 
 <body>
-    <p id="myqid" style="display:none;">{{question.id}}</p>
+    <div id="loader">
+        <div class="loader">
+            
+        </div>
+    </div>
+    <p id="myqid" class="hidden" style="display:none;">{{question.id}}</p>
+    <p id="starttime" class="hidden">{{starttime}}</p>
+    
     <div class="container">
         <div class="row">
                 <h3 class="col-sm-8 col-md-8">{{ question.question }}</h3>

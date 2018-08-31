@@ -4,14 +4,17 @@ var wordlimit = 150;
 var submitEssay = function (e) {
     //TODO: decide about word limit
     clearInterval(timer);
+    $('#loader').show();
     let text = $('#id_answer').val();
     let qid = $('#myqid').text();
+    let starttime = $('#starttime').text();
     console.log(qid);
     $.post(
         '/fetch/',
         {
             'essay': text,
             'qid': qid,
+            'starttime':starttime
         },
         function (data) {
             $('#w_c').text(data['wordCount']);
@@ -32,6 +35,7 @@ var submitEssay = function (e) {
             $('#wordcount').hide();
             $('#essay').show();
             $('#res').show();
+            $('#loader').hide();
         }, "json"
     )
 }
@@ -49,7 +53,6 @@ var pad = function (num, size) {
 }
 
 var updateTimer = function () {
-    console.log("working");
     var t = new Date();
     var timeinsec = timelimit - Math.floor((t.getTime() - starttime) / 1000);
     var timeinmin = Math.floor(timeinsec / 60);

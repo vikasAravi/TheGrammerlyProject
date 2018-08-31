@@ -16,6 +16,7 @@ from django.shortcuts import redirect
 from datetime import datetime
 #from . misc import score_calculator
 
+datetimeformat = "%Y %d %m %H:%M"
 
 class SignUp(generic.CreateView):
     form_class = MyUserCreationForm
@@ -65,7 +66,8 @@ def HomePage_view(request):
 
 @login_required(login_url="login")
 def answer_view(request,qid):
-    return render(request, template_name="answer.html",context = {'question': Question.objects.get(pk=qid)})
+    s = datetime.strftime(datetime.now(), datetimeformat)
+    return render(request, template_name="answer.html",context = {'question': Question.objects.get(pk=qid), 'starttime':s})
 
 @login_required(login_url="login")
 def get_results(request):
@@ -89,6 +91,8 @@ def fetch_results(request):
         d = Report(request.POST['essay']).reprJSON()
         essay = request.POST['essay']
         qid = request.POST['qid']
+        starttime = datetime.strptime(request.POST['starttime'], datetimeformat)
+        endtime = datetime.now()
         qs = Answer.objects.filter(question_id = qid, user_id = request.user.id)
         if qs:
             qs.delete()
@@ -96,7 +100,7 @@ def fetch_results(request):
         grammarCount = d['grammarErrorCount']
         spellingCount = d['spellingErrorCount']
         json_object = json.dumps(d)
-        foo_instance = Answer(user_id=request.user.id,question_id = qid,Json = json_object,score = score,grammarErrors = grammarCount ,spellingErrors = spellingCount)
+        foo_instance = Answer(user_id=request.user.id,question_id = qid,Json = json_object,score = score,grammarErrors = grammarCount ,spellingErrors = spellingCount, starttime=starttime, endtime=endtime)
         foo_instance.save()
        
         return HttpResponse(json_object)
@@ -114,24 +118,14 @@ def delete_question(request, qid):
 
 @login_required(login_url="login")
 def leaderboard(request, qid):
-    qs = Answer.objects.filter(question_id=qid).order_by('-score')
-    q = list(Question.objects.filter(question_id=qid))[0].question
+    qs = Answer.objects.filter(question_id=qid).order_by('-score').only("user", "score", "starttime", "endtime")
+    q = Question.objects.get(pk=qid).question
     results = []
     if qs:
-        users = list(qs.values_list('user_id', flat=True))
-        scores = list(qs.values_list('score', flat=True))
-        gc = list(qs.values_list('grammarErrors',flat=True))
-        sc =  list(qs.values_list('spellingErrors',flat=True))
-        js = list(qs.values_list('Json',flat=True))
-        prev = 11
-        rank = 0
-        for i in range(len(users)):
-            username = User.objects.get(pk=users[i]).username
-            score = scores[i]
-            if prev > score:
-                prev = score
-                rank += 1
-            results.append((username, rank, score))
+        rank = 1
+        for attempt in qs:
+            results.append((attempt.user, rank, attempt.score, datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M")))
+            rank += 1
     return render(request, template_name="leaderboard.html", context={"results": results, "question":q})
 
 
