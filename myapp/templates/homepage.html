@@ -1,20 +1,49 @@
 {% load static %}
 {% include "header.html" %}
+<style>
+    header.masthead {
+        background-image: url("{% static "images/bg.jpg"%}");
+        padding-top: 10rem;
+        padding-bottom: calc(10rem - 56px);
+        background-position: center center;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+    }
+</style>
 
-    <div class="container mt-5 text-center">
-            <p class="text-center font-weight-light">Put your grammar skills to test</p>
+<header class="masthead text-center text-white d-flex">
+        <div class="container my-auto">
+          <div class="row">
+            <div class="col-lg-10 mx-auto">
+              <h1 class="text-uppercase">
+                <strong>Put your grammar skills to test</strong>
+              </h1>
+              <hr>
+            </div>
             {% if user.is_staff %}
-            <a href="{% url "questionmanager" %}"><button class="btn btn-success mt-5 btn-lg">Manage Questions</button></a>
-            <a href="{% url "getallusersummary" %}"><button class="btn btn-success mt-5 btn-lg">User Summary</button></a>
+            <div class="col-lg-8 mx-auto">
+                <p class="text-faded mb-5">Create new questions or see attempts made for your questions. You can also see overall user performance for all questions thay have attempted from your question bank.</p>
+                <a href="{% url "questionmanager" %}"><button class="btn btn-success mt-5 btn-xl">Manage Questions</button></a>
+                <a href="{% url "getallusersummary" %}"><button class="btn btn-success mt-5 btn-lg">User Summary</button></a>
+            </div>
             {% else %}
-            <a href="{% url "practice" %}"><button class="btn btn-success mt-5 btn-lg">Practice</button></a>
-            <!--form to enter testcode and button to lead there. Note that first we need to check 
-                via AJAX whether user has already reached the required limit. else we do the submit that 
-                redirects to appropriate page to answer that question
-            -->
-            <a href="{% url "getuserperformance" %}"><button class="btn btn-success mt-5 btn-lg">Your Stats</button></a>
+            <div class="col-lg-8 mx-auto">
+                <p class="text-faded mb-5">Take a test if you know the test code or practice on some great essay topics. At any point you can see your performance and improve.</p>
+                <a href="{% url "practice" %}"><button class="btn btn-success mt-5 btn-lg">Practice</button></a>
+                <!--form to enter testcode and button to lead there. Note that first we need to check 
+                    via AJAX whether user has already reached the required limit. else we do the submit that 
+                    redirects to appropriate page to answer that question
+                -->
+                <a href="{% url "getuserperformance" %}"><button class="btn btn-success mt-5 btn-lg">Your Stats</button></a>
+            </div>
+            
             {% endif %}
-    </div>
+            
+          </div>
+        </div>
+      </header>
 
 {% include "footer.html" %}
 </body>
