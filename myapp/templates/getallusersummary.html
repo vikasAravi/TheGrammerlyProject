@@ -1,0 +1,76 @@
+{% include "header.html" %}
+{% load static %}
+<link rel="stylesheet" href="{% static "answer.css"%}"/>
+<style>
+    #hi{
+        font-weight: bolder;
+    }
+    #hello{
+       font-style: italic;
+       font-weight: bold;
+    }
+    .userattempt {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    .userattempt:hover {
+        font-weight: bold;
+    }
+
+    .table {
+        font-size:1.2em;
+    }
+</style>
+
+<div class="container">
+   
+<table id="leaderboard" class="table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Average Score</th>
+        <th>Total Attempts</th>
+        <th>Last Attempt Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for result in results %}
+      <tr>
+        <td class="userattempt" onclick = "showUserChart('{{result.userid}}', '{{result.username}}')">{{result.username}}</td>
+        <td>{{result.avgscore}}</td>
+        <td>{{result.count}}</td>
+        <td>{{result.lastattempted}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>       
+</div>
+    <div class="modal fade" id="modChart" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                        <h4 class="modal-title" id="username"></h4>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                    </button>
+                    
+                </div>
+                <div class="modal-body">
+                    <canvas id="canvas" width="568" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% include "footer.html" %}
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#leaderboard').DataTable();
+        } );
+        //make ajax call
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    <script src="{% static "userperfdata.js"%}"></script>
+</body>
+</html>

@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 # Create your views here.
 from django.urls import reverse_lazy
+from django.db.models import Avg, Count, Max
 from django.views import generic
 from . forms import MyUserCreationForm, QuestionForm
 from . models import Question, Answer,User
@@ -145,7 +146,7 @@ def leaderboard(request, qid):
 def getuserattemptdata(request):
     a =  Answer.objects.filter(user_id=request.user.id).order_by('starttime').only("score")
     data = []
-    for x in list(a):
+    for x in a:
         data.append(x.score)
     return JsonResponse({"data":data})
 
@@ -157,7 +158,7 @@ def getuserperformance(request):
     totalattempts = 0
     attempttimes = []
     lastattempted = "nil"
-    print(qs)
+    
     if qs:
         for attempt in qs:
             avgscore += attempt.score
@@ -171,3 +172,23 @@ def getuserperformance(request):
     
     return render(request, template_name="userperformance.html", context={"results": results, "user":request.user.id, "avgscore":avgscore, "totalattempts":totalattempts, "lastattempted":lastattempted})
 
+@login_required(login_url="login")
+def getuserperfdata(request, uid):
+    a = Answer.objects.filter(question__user_id=request.user.id, user_id=uid).order_by('starttime').only('score')
+    data = []
+    for x in a:
+        data.append(x.score)
+    print(data)
+    return JsonResponse({"data":data})
+
+    
+
+@login_required(login_url="login")
+def getallusersummary(request):
+    qs = Answer.objects.filter(question__user_id=request.user.id).select_related().values("user_id").annotate(Avg('score'), Count('question'), Max('starttime'))
+    results = []
+    for result in qs:
+        u = User.objects.get(pk=result['user_id'])
+        results.append({"userid":result['user_id'], "username":u.username, "avgscore":result['score__avg'], "count":result['question__count'], "lastattempted":result['starttime__max']})
+    
+    return render(request, template_name="getallusersummary.html", context={"results":results})
