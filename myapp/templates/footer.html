@@ -1,4 +1,22 @@
-<h2>FOOTER</h2>
+
+{% load static %}
+<style>
+.footer {
+    background-color: #343a40;
+    text-align: center;
+    margin-top:50px;
+}
+
+.footer .logo {
+    margin:20px auto;
+    width:300px;
+}
+
+
+</style>
+<div class="container-fluid footer">
+    <img class="logo" src="{% static "images/llogo.png"%}"/>
+</div>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

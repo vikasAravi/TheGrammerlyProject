@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
 # Create your models here.
 
 
@@ -9,6 +10,10 @@ class Question(models.Model):
     code = models.CharField(max_length = 8,unique = True)
     wordlimit = models.IntegerField(default=150)
     attemptsallowed = models.IntegerField(default=1)
+    datecreated = models.DateField(default=datetime.datetime.now)
+
+    # should we add timelimit and wordcount to this?
+
     def __str__(self):
         return "{}".format(self.question)
 

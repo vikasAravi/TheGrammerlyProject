@@ -15,6 +15,7 @@ import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from datetime import datetime
+from django.db.models import Avg
 #from . misc import score_calculator
 
 datetimeformat = "%Y %d %m %H:%M"
@@ -162,6 +163,9 @@ def getuserattemptdata(request):
 
 @login_required(login_url="login")
 def getuserperformance(request):
+    score = Answer.objects.filter(user_id = request.user.id).aggregate(Avg('score'))
+    avg_score = score['score__avg']
+    no_of_attempts = Answer.objects.filter(user_id = request.user.id).count()
     qs = Answer.objects.filter(user_id=request.user.id).order_by('-score').only("question_id", "score", "starttime", "endtime", "grammarErrors", "spellingErrors")
     results = []
     avgscore = 0
