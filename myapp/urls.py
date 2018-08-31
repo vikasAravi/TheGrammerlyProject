@@ -16,4 +16,5 @@ urlpatterns = [
     path('getuserperformance/',views.getuserperformance,name='getuserperformance'),
     path('home/del/<int:qid>',views.delete_question, name = 'delete'),
     path('leaderboard/<int:qid>',views.leaderboard, name = 'leaderboard'),
+    path('getuserattemptdata/', views.getuserattemptdata, name='getuserattemptdata'),
 ]

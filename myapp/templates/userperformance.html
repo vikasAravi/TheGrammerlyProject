@@ -26,9 +26,14 @@
         padding:30px;
         background-color: #dddddd;
     }
+
+    #myChart {
+        height:200px;
+    }
 </style>
  <div class="container-fluid topheading">
         <h1>Your Performance</h1> 
+        {% include "userperformancechart.html" %}
 </div>
 <div class="container">
    
@@ -83,6 +88,8 @@
         $(document).ready(function() {
             $('#leaderboard').DataTable();
         } );
+        //make ajax call
     </script>
+    <script src="{% static "userperformancechart.js"%}"></script>
 </body>
-    </html>
+</html>

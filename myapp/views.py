@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from . forms import MyUserCreationForm, QuestionForm
 from . models import Question, Answer,User
-from django.http import HttpResponse,HttpResponseRedirect
+from django.http import HttpResponse,HttpResponseRedirect, JsonResponse
 from .checker.report import Report
 import json
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -142,13 +142,32 @@ def leaderboard(request, qid):
     return render(request, template_name="leaderboard.html", context={"results": results, "question":q})
 
 @login_required(login_url="login")
+def getuserattemptdata(request):
+    a =  Answer.objects.filter(user_id=request.user.id).order_by('starttime').only("score")
+    data = []
+    for x in list(a):
+        data.append(x.score)
+    return JsonResponse({"data":data})
+
+@login_required(login_url="login")
 def getuserperformance(request):
     qs = Answer.objects.filter(user_id=request.user.id).order_by('-score').only("question_id", "score", "starttime", "endtime", "grammarErrors", "spellingErrors")
     results = []
+    avgscore = 0
+    totalattempts = 0
+    attempttimes = []
+    lastattemptted = "nil"
     print(qs)
     if qs:
         for attempt in qs:
+            avgscore += attempt.score
+            totalattempts += 1
+            attempttimes.append(attempt.starttime)
             q = Question.objects.get(pk=attempt.question_id).question
             results.append((q, attempt.score, datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M"), attempt.grammarErrors, attempt.spellingErrors, attempt.question_id))
-    return render(request, template_name="userleaderboard.html", context={"results": results})
+    if(totalattempts>0):
+        avgscore /= totalattempts
+        lastattempted = sorted(attempttimes)[-1]
+    
+    return render(request, template_name="userperformance.html", context={"results": results, "user":request.user.id, "avgscore":avgscore, "totalattempts":totalattempts, "lastattempted":lastattemptted})
 
