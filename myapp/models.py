@@ -7,8 +7,8 @@ class Question(models.Model):
     question = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.CharField(max_length = 8,unique = True)
-    # should we add timelimit and wordcount to this?
-
+    wordlimit = models.IntegerField(default=150)
+    attemptsallowed = models.IntegerField(default=1)
     def __str__(self):
         return "{}".format(self.question)
 
