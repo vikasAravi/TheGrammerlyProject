@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import TemplateView
 from . import views
-from . views import question_view,delete_question,leaderboard,extended,review
+from . views import question_view,delete_question,leaderboard,review
 
 
 urlpatterns = [
@@ -15,5 +15,4 @@ urlpatterns = [
     path('getresult/',views.get_results,name='get_results'),
     path('home/del/<int:qid>',delete_question, name = 'delete'),
     path('leaderboard/<int:qid>',leaderboard, name = 'leaderboard'),
-    path('test1/',extended,name='extended'),
 ]

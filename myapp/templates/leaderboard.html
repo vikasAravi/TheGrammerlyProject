@@ -53,7 +53,7 @@
             <!-- Modal content-->
             <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">SOME TITLE</h4>
+                <h4 class="modal-title"><span id="username"></span> : {{question}}</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -65,5 +65,5 @@
     {% include "footer.html" %}
     <script src="{% static "displayresults.js" %}"></script>
     <script src="{% static "retrieveresults.js" %}"></script>
-</body>z
+</body>
     </html>

@@ -20,3 +20,5 @@ class Answer(models.Model):
     Json = models.TextField()
     spellingErrors = models.IntegerField()
     grammarErrors = models.IntegerField()
+    starttime = models.DateTimeField()
+    endtime = models.DateTimeField()

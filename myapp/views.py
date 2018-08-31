@@ -13,6 +13,7 @@ from .checker.report import Report
 import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
+from datetime import datetime
 #from . misc import score_calculator
 
 
@@ -66,6 +67,7 @@ def HomePage_view(request):
 def answer_view(request,qid):
     return render(request, template_name="answer.html",context = {'question': Question.objects.get(pk=qid)})
 
+@login_required(login_url="login")
 def get_results(request):
     if request.method == "POST":
         uid = request.POST['uid']
@@ -74,10 +76,12 @@ def get_results(request):
         #get the json from DB in variable d
         userid = list(User.objects.filter(username=uid))[0].id
         qs =  list(Answer.objects.filter(question_id = qid, user_id = userid))[0]
-        d = json.loads(json.dumps(qs.Json))
-        print(d)
-        return HttpResponse(json.dumps(d))
+        #d = json.loads(json.dumps(qs.Json))
+        #print(d)
+        #print(qs.Json)
+        return HttpResponse(qs.Json)
 
+@login_required(login_url="login")
 def fetch_results(request):
     if request.method == "GET":
          return HttpResponse("hey") 
@@ -91,13 +95,14 @@ def fetch_results(request):
         score = d['score']
         grammarCount = d['grammarErrorCount']
         spellingCount = d['spellingErrorCount']
-        json_object = d
+        json_object = json.dumps(d)
         foo_instance = Answer(user_id=request.user.id,question_id = qid,Json = json_object,score = score,grammarErrors = grammarCount ,spellingErrors = spellingCount)
         foo_instance.save()
        
-        return HttpResponse(json.dumps(d))
+        return HttpResponse(json_object)
     #return render(request,template_name="answer.html",context={"obj":json.dumps(d)})
 
+@login_required(login_url="login")
 def delete_question(request, qid):
     question = Question.objects.get(pk=qid)
     # add case where user can del question which is created by him only
@@ -107,9 +112,10 @@ def delete_question(request, qid):
         question.delete()
         return redirect('home')
 
-
+@login_required(login_url="login")
 def leaderboard(request, qid):
     qs = Answer.objects.filter(question_id=qid).order_by('-score')
+    q = list(Question.objects.filter(question_id=qid))[0].question
     results = []
     if qs:
         users = list(qs.values_list('user_id', flat=True))
@@ -126,14 +132,8 @@ def leaderboard(request, qid):
                 prev = score
                 rank += 1
             results.append((username, rank, score))
-    return render(request, template_name="leaderboard.html", context={"results": results})
+    return render(request, template_name="leaderboard.html", context={"results": results, "question":q})
 
-# def modal(request,qid):
-#      qs = Answer.objects.filter(question_id=qid)
-#      js = list(qs.values_list('Json',flat=True))
-
-def extended(request):
-    return render(request,template_name= 'extended.html')
 
 
 def review(request,uid,qid):
