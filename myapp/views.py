@@ -14,6 +14,7 @@ import json
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from datetime import datetime
+from django.db.models import Avg
 #from . misc import score_calculator
 
 datetimeformat = "%Y %d %m %H:%M"
@@ -143,6 +144,9 @@ def leaderboard(request, qid):
 
 @login_required(login_url="login")
 def getuserperformance(request):
+    score = Answer.objects.filter(user_id = request.user.id).aggregate(Avg('score'))
+    avg_score = score['score__avg']
+    no_of_attempts = Answer.objects.filter(user_id = request.user.id).count()
     qs = Answer.objects.filter(user_id=request.user.id).order_by('-score').only("question_id", "score", "starttime", "endtime", "grammarErrors", "spellingErrors")
     results = []
     print(qs)
@@ -150,5 +154,5 @@ def getuserperformance(request):
         for attempt in qs:
             q = Question.objects.get(pk=attempt.question_id).question
             results.append((q, attempt.score, datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M"), attempt.grammarErrors, attempt.spellingErrors, attempt.question_id))
-    return render(request, template_name="userleaderboard.html", context={"results": results})
+    return render(request, template_name="userleaderboard.html", context={"results": results, 'score': avg_score, 'no_of_attempts' : no_of_attempts})
 
