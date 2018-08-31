@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+{#{% extends 'base.html' %}#}
+{% load bootstrap4 %}
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:300" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <style>
+        body{
+          background-color: snow;
+        }
+        body,input{
+            font-family: 'Ubuntu', sans-serif;
+            letter-spacing: 0.0800em;
+        }
+        label{
+            display: none;
+        }
+        span{
+            font-family: 'Raleway', sans-serif;
+            letter-spacing: 0.0800em;
+            font-size: 30px;
+        }
+        .homelink {
+            text-decoration: none;
+            color:black;
+            font-size:2em;
+            text-decoration: none;
+        }
+        
+        .homelink:hover {
+            text-decoration: none;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row-1">
+            <div class="d-flex flex-column col-sm-9 col-md-7 col-lg-5 mx-auto my-5">
+                <a class="homelink d-flex flex-row justify-content-center p-3" href="{% url "homepage" %}">
+                    <img src="{% static "images/correct.png" %}" width="50" height="50" alt="">
+                    <span class="p-1 mt-auto">Grammar Expert</span>
+                </a>
+                <div class="card card-login p-2">
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            <input type="submit" name="commit" value="Login" tabindex="3" class="btn btn-primary btn-block" data-disable-with="Logging in…">
+                        </form>
+                    </div>
+                </div>
+                <div class="card card-create-user mt-3">
+                    <div class="card-body text-center">
+                        New to Grammar Expert?
+                        <a href="{% url "signup" %}" class="card-link">Create account</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+
+

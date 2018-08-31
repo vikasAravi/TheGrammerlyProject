@@ -1,0 +1,76 @@
+#time{
+    display:block;
+    height:50px;
+    line-height: 50px;
+    border-radius:15px;
+    margin:0 10px;
+   color: white;
+   background-color: cornflowerblue;
+}
+body{
+    font-family: 'Ubuntu', sans-serif;
+    letter-spacing: 0.0500em;
+}
+
+#homelink {
+    text-decoration: none;
+    color:white;
+    font-size:2em;
+    text-decoration: none;
+}
+
+#homelink:hover {
+    text-decoration: none;
+}
+.navbar-brand span{
+    padding-left: 15px;
+    font-family: 'Raleway', sans-serif;
+    letter-spacing: 0.0800em;
+}
+
+.row {
+    margin-top:50px;
+}
+
+#time {
+    text-align: center;
+}
+
+#res{
+   display:none;
+   margin:0 10%;
+}
+
+#essay {
+    display:none;
+}
+
+pre {
+    display:inline;
+    border:none;
+    background-color: white;
+}
+
+span.error {
+    text-decoration: underline;
+}
+
+span.spelling {
+    color:white;
+    font-weight: bold;
+    background-color: darkred;
+}
+
+span.grammar {
+    font-weight: bold;
+    font-style: italic;
+    background-color: yellow;
+}
+
+span.correct {
+    color:#444444;
+}
+
+div p{
+    margin-left: 30px;
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{ % load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+        
+        <body>
+            <div class="container">
+                <div class="row">
+                        <h3 class="col-sm-8 col-md-8">{{ question.question }}</h3>
+                        <h4 class="col-sm-3 col-md-3" id="time"></h4>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1 col-md-1"></div>
+                    <textarea class="col-sm-10 col-md-10" id="id_answer" rows="20" cols="120" placeholder="Write your essay here"></textarea>
+        
+                    <p class="col-sm-10 col-md-10" id='essay'></p>
+                    <div class="col-sm-1 col-md-1"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2 col-md-2"></div>
+                    <h4 class="col-sm-4 col-md-4" id="wordcount"></h4>
+                    <button class="col-sm-4 col-md-4 btn btn-primary btn-lg" type="button"
+                            id="submit_button">Submit</button>
+                </div>
+                <div class="row" id="res">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Overall Score</th>
+                                <td id="score"></td>
+                            </tr>
+                            <tr>
+                                <th>Word Count</th>
+                                <td id="w_c"></td>
+                            </tr>
+                            <tr>
+                                <th>Grammar Errors</th>
+                                <td id="grammar"></td>
+                            </tr>
+                            <tr>
+                                <th>Spelling Mistakes</th>
+                                <td id="spelling"></td>
+                            </tr>
+                            <tr>
+                                <th>Word Limit Check</th>
+                                <td id="wordlimit">Essay does not meet required word limit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+        </body>
+        {% include "footer.html" %}
+        <script src="{% static "answer.js" %}"></script>
+</body>
+</html>

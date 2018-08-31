@@ -1,0 +1,15 @@
+ .navbar-brand span{
+      padding-left: 15px;
+      font-family: 'Raleway', sans-serif;
+      letter-spacing: 0.0800em;
+  }
+  #homelink {
+    text-decoration: none;
+    color:white;
+    font-size:2em;
+    text-decoration: none;
+}
+
+#homelink:hover {
+    text-decoration: none;
+}

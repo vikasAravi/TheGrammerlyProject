@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Grammar Expert</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:300" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        .container p{
+            color: #edf3f5;
+            font-family: 'Ubuntu', sans-serif;
+            font-size: 45px;
+            letter-spacing: 0.0500em;
+            z-index: 2;
+            text-shadow: 2px 4px 3px rgba(0,0,0,0.3);
+        }
+        body {
+            background: url('https://www.netgeekpro.com/wp-content/uploads/2017/06/Best-Laptop-For-Writers-Writing.jpg') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            background-size: cover;
+            -o-background-size: cover;
+        }
+       
+        .navbar-brand span{
+            padding-left: 15px;
+            font-family: 'Raleway', sans-serif;
+            letter-spacing: 0.0800em;
+        }
+
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2">
+        <a class="navbar-brand d-inline-block align-top" href="#">
+            <img src="{% static "images/correct.png" %}" width="35" height="35" alt="">
+            <a id="homelink" href="{% url "homepage" %}"><span>Grammar Expert</span></a>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav ml-auto">
+        {% if user.is_authenticated %}
+          <a class="nav-item nav-link pr-5">Hi {{ user.username }}!</a>
+          <a class="nav-item nav-link pr-2" href="{% url "logout" %}">Logout</a>
+        {% else %}
+            <a class="nav-item nav-link pr-5"  href="{% url "login" %}">Login</a>
+            <a class="nav-item nav-link pr-2" href="{% url "signup" %}">Signup</a>
+        {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5 text-center">
+            <p class="text-center font-weight-light">Put your grammar skills to test</p>
+            <a href="{% url "home" %}"><button class="btn btn-success mt-5 btn-lg">Practice</button></a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
+
