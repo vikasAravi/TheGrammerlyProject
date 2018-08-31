@@ -225,4 +225,7 @@ def getallusersummary(request):
 @login_required(login_url="login")
 def canattempt(request, code):
     q = Answers.objects.filter(user_id=request.user.id, question_code=code).annotate(Count('question_code'))
+    #idea is to see how many attempts he has made and what is allowed for this question
+    #if allowed return json {"status":"OK", "url":"/attempt/qid"}
+    #else return json {"status":"You have reached the maximum limit to answer this question. Try other!"}
     print(q)

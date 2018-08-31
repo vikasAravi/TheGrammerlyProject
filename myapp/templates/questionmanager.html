@@ -27,7 +27,9 @@
                         </div>
                         <div id="c{{question.id}}" class="collapse" aria-labelledby="h{{question.id}}" data-parent="#accordion">
                             <div class="card-body">
-        
+    
+                                <!--TODO: this is very dirty right now. Need to style and allow editing of attempts and wordlimit
+                                    via AJAX queries-->
                                 <span>CODE:</span><span> {{question.code}}</span>
                                 <span>Attempts Allowed:</span><span> {{question.attemptsallowed}}</span><button class="btn btn-success">+</button>
                                 <span>Word limit:</span><input type="range" min="150" max="400" value="{{question.wordlimit}}"></button>
