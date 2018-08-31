@@ -152,9 +152,3 @@ def getuserperformance(request):
             results.append((q, attempt.score, datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M"), attempt.grammarErrors, attempt.spellingErrors, attempt.question_id))
     return render(request, template_name="userleaderboard.html", context={"results": results})
 
-
-
-def review(request,uid,qid):
-      qs = Answer.objects.filter(question_id = qid, user_id = request.user.id)
-      print(qs)
-      return render(request,template_name= 'review.html', context = {'qs': qs})
