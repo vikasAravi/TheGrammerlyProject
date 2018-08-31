@@ -156,7 +156,7 @@ def getuserperformance(request):
     avgscore = 0
     totalattempts = 0
     attempttimes = []
-    lastattemptted = "nil"
+    lastattempted = "nil"
     print(qs)
     if qs:
         for attempt in qs:
@@ -169,5 +169,5 @@ def getuserperformance(request):
         avgscore /= totalattempts
         lastattempted = sorted(attempttimes)[-1]
     
-    return render(request, template_name="userperformance.html", context={"results": results, "user":request.user.id, "avgscore":avgscore, "totalattempts":totalattempts, "lastattempted":lastattemptted})
+    return render(request, template_name="userperformance.html", context={"results": results, "user":request.user.id, "avgscore":avgscore, "totalattempts":totalattempts, "lastattempted":lastattempted})
 
