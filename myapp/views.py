@@ -41,7 +41,7 @@ class SignUp(generic.CreateView):
 #     model = Question
 
 @login_required(login_url="login")
-def question_view(request):
+def questionmanager(request):
     user = request.user
     if user.is_staff:
         context = dict()
@@ -55,18 +55,23 @@ def question_view(request):
             form = QuestionForm()
         context['form'] = form
         context['object_list'] = Question.objects.filter(user_id=request.user.id)
-        return render(request, template_name = 'testcreator home.html', context=context)
+        return render(request, template_name = 'questionmanager.html', context=context)
     else:
-        context = dict()
-        context['object_list'] = Question.objects.filter(user_id = 1)
-        return render(request, template_name = 'testtaker home.html', context=context)
+        return render(request, template_name = '', context=context)
 
-def HomePage_view(request):
+@login_required(login_url="login")
+def practice(request):
+    context = dict()
+    context['object_list'] = Question.objects.filter(user_id = 1)
+    return render(request, template_name = 'practice.html', context=context)
+
+@login_required(login_url="login")
+def main_view(request):
     return render(request,template_name="homepage.html", context={"user": request.user})
 
 
 @login_required(login_url="login")
-def answer_view(request,qid):
+def attempt(request,qid):
     s = datetime.strftime(datetime.now(), datetimeformat)
     return render(request, template_name="answer.html",context = {'question': Question.objects.get(pk=qid), 'starttime':s})
 
@@ -85,7 +90,7 @@ def getanswerforuser(request):
 
 @login_required(login_url="login")
 def get_results(request):
-    if request.method == "POST":
+    if request.use.is_staff and request.method == "POST":
         uid = request.POST['uid']
         qid = request.POST['qid']
         #print(uid, qid)
@@ -96,11 +101,11 @@ def get_results(request):
         #print(d)
         #print(qs.Json)
         return HttpResponse(qs.Json)
+    else:
+        return JsonResponse([])
 
 @login_required(login_url="login")
 def fetch_results(request):
-    if request.method == "GET":
-         return HttpResponse("hey") 
     if request.method == "POST":
         d = Report(request.POST['essay']).reprJSON()
         essay = request.POST['essay']
@@ -118,29 +123,34 @@ def fetch_results(request):
         foo_instance.save()
        
         return HttpResponse(json_object)
-    #return render(request,template_name="answer.html",context={"obj":json.dumps(d)})
 
 @login_required(login_url="login")
 def delete_question(request, qid):
-    question = Question.objects.get(pk=qid)
-    # add case where user can del question which is created by him only
-    if question.user_id != request.user.id:
-        return HttpResponse("Not allowed")
+    if request.user.is_staff:
+        question = Question.objects.get(pk=qid)
+        # add case where user can del question which is created by him only
+        if question.user_id != request.user.id:
+            return HttpResponse("Not allowed")
+        else:
+            question.delete()
+            return redirect('home')
     else:
-        question.delete()
-        return redirect('home')
+        return render(request, template_name = '', context=context)
 
 @login_required(login_url="login")
 def leaderboard(request, qid):
-    qs = Answer.objects.filter(question_id=qid).order_by('-score').only("user", "score", "starttime", "endtime")
-    q = Question.objects.get(pk=qid).question
-    results = []
-    if qs:
-        rank = 1
-        for attempt in qs:
-            results.append((attempt.user, rank, attempt.score, datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M")))
-            rank += 1
-    return render(request, template_name="leaderboard.html", context={"results": results, "question":q})
+    if request.user.is_staff:
+        qs = Answer.objects.filter(question_id=qid).order_by('-score').only("user", "score", "starttime", "endtime")
+        q = Question.objects.get(pk=qid).question
+        results = []
+        if qs:
+            rank = 1
+            for attempt in qs:
+                results.append((attempt.user, rank, attempt.score, datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M")))
+                rank += 1
+        return render(request, template_name="leaderboard.html", context={"results": results, "question":q})
+    else:
+        return render(request, template_name = '', context=context)
 
 @login_required(login_url="login")
 def getuserattemptdata(request):
@@ -174,21 +184,27 @@ def getuserperformance(request):
 
 @login_required(login_url="login")
 def getuserperfdata(request, uid):
-    a = Answer.objects.filter(question__user_id=request.user.id, user_id=uid).order_by('starttime').only('score')
-    data = []
-    for x in a:
-        data.append(x.score)
-    print(data)
-    return JsonResponse({"data":data})
+    if request.user.is_staff:
+        a = Answer.objects.filter(question__user_id=request.user.id, user_id=uid).order_by('starttime').only('score')
+        data = []
+        for x in a:
+            data.append(x.score)
+        print(data)
+        return JsonResponse({"data":data})
+    else:
+        return JsonResponse({"data":[]})
 
     
 
 @login_required(login_url="login")
 def getallusersummary(request):
-    qs = Answer.objects.filter(question__user_id=request.user.id).select_related().values("user_id").annotate(Avg('score'), Count('question'), Max('starttime'))
-    results = []
-    for result in qs:
-        u = User.objects.get(pk=result['user_id'])
-        results.append({"userid":result['user_id'], "username":u.username, "avgscore":result['score__avg'], "count":result['question__count'], "lastattempted":result['starttime__max']})
-    
-    return render(request, template_name="getallusersummary.html", context={"results":results})
+    if request.user.is_staff:
+        qs = Answer.objects.filter(question__user_id=request.user.id).select_related().values("user_id").annotate(Avg('score'), Count('question'), Max('starttime'))
+        results = []
+        for result in qs:
+            u = User.objects.get(pk=result['user_id'])
+            results.append({"userid":result['user_id'], "username":u.username, "avgscore":result['score__avg'], "count":result['question__count'], "lastattempted":result['starttime__max']})
+        
+        return render(request, template_name="getallusersummary.html", context={"results":results})
+    else:
+        return render(request, template_name = '', context=context)

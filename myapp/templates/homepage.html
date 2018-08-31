@@ -3,9 +3,17 @@
 
     <div class="container mt-5 text-center">
             <p class="text-center font-weight-light">Put your grammar skills to test</p>
-            <a href="{% url "home" %}"><button class="btn btn-success mt-5 btn-lg">Practice</button></a>
-            <a href="{% url "getuserperformance" %}"><button class="btn btn-success mt-5 btn-lg">Your Stats</button></a>
+            {% if user.is_staff %}
+            <a href="{% url "questionmanager" %}"><button class="btn btn-success mt-5 btn-lg">Manage Questions</button></a>
             <a href="{% url "getallusersummary" %}"><button class="btn btn-success mt-5 btn-lg">User Summary</button></a>
+            {% else %}
+            <a href="{% url "practice" %}"><button class="btn btn-success mt-5 btn-lg">Practice</button></a>
+            <!--form to enter testcode and button to lead there. Note that first we need to check 
+                via AJAX whether user has already reached the required limit. else we do the submit that 
+                redirects to appropriate page to answer that question
+            -->
+            <a href="{% url "getuserperformance" %}"><button class="btn btn-success mt-5 btn-lg">Your Stats</button></a>
+            {% endif %}
     </div>
 
 {% include "footer.html" %}
