@@ -25,18 +25,24 @@
             {% if user.is_staff %}
             <div class="col-lg-8 mx-auto">
                 <p class="text-faded mb-5">Create new questions or see attempts made for your questions. You can also see overall user performance for all questions thay have attempted from your question bank.</p>
-                <a href="{% url "questionmanager" %}"><button class="btn btn-success mt-5 btn-xl">Manage Questions</button></a>
-                <a href="{% url "getallusersummary" %}"><button class="btn btn-success mt-5 btn-lg">User Summary</button></a>
+                <a href="{% url "questionmanager" %}"><button class="btn btn-primary mt-5 btn-xl">Manage Questions</button></a>
+                <a href="{% url "getallusersummary" %}"><button class="btn btn-success mt-5 btn-xl">User Summary</button></a>
             </div>
             {% else %}
             <div class="col-lg-8 mx-auto">
                 <p class="text-faded mb-5">Take a test if you know the test code or practice on some great essay topics. At any point you can see your performance and improve.</p>
-                <a href="{% url "practice" %}"><button class="btn btn-success mt-5 btn-lg">Practice</button></a>
+                <div class="input-group">
+                <input type="text" id="code" class="form-control" placeholder="test code">
+                <span class="input-group-btn" >
+                    <button id="go" class="btn btn-success" style="border-radius:0 5px 5px 0;" type="button" onclick="verifyandgo();">Take Test Now</button>
+                </span>
+                </div>
+                <a href="{% url "practice" %}"><button class="btn btn-primary mt-5 btn-xl">Practice</button></a>
                 <!--form to enter testcode and button to lead there. Note that first we need to check 
                     via AJAX whether user has already reached the required limit. else we do the submit that 
                     redirects to appropriate page to answer that question
                 -->
-                <a href="{% url "getuserperformance" %}"><button class="btn btn-success mt-5 btn-lg">Your Stats</button></a>
+                <a href="{% url "getuserperformance" %}"><button class="btn btn-success mt-5 btn-xl">Your Stats</button></a>
             </div>
             
             {% endif %}
@@ -46,6 +52,55 @@
       </header>
 
 {% include "footer.html" %}
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                // Only send the token to relative URLs i.e. locally.
+                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            }
+        }
+    });
+
+    $(function() {
+        $('#go').prop("disabled", true);
+        $('#code').keyup(function() {
+            var code = $('#code').val();
+            if (code.trim()=='' || code.length!=8) {
+                $('#go').prop("disabled", true);
+            } else {
+                $('#go').prop("disabled", false);
+            }
+        })
+    })
+    var verifyandgo = function() {
+        var code = $('#code').val();
+        //make ajax call and on response success relocate to the attempt page else alert error
+        $.getJSON("/canattempt/"+code, function(data) {
+            if(data['status']=='OK') {
+                window.location(data["url"]);
+            } else {
+                alert(data['status']);
+            }
+        })
+    }
+</script>
 </body>
 </html>
 

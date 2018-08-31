@@ -16,6 +16,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from datetime import datetime
 from django.db.models import Avg
+import random
+import string
 #from . misc import score_calculator
 
 datetimeformat = "%Y %d %m %H:%M"
@@ -48,10 +50,17 @@ def questionmanager(request):
         context = dict()
         if request.method == "POST":
             form = QuestionForm(request.POST)
+            code = ''.join(random.choices(string.ascii_lowercase + string.ascii_uppercase + string.digits, k=8))
+            c = Question.objects.filter(code=code)
+            while len(list(c))>0:
+                code = ''.join(random.choices(string.ascii_lowercase + string.ascii_uppercase + string.digits, k=8))
+                c = Question.objects.filter(code=code)
             if form.is_valid():
                 question = form.save(commit = False)
                 question.user = request.user
+                question.code = code
                 question.save()
+                print(question)
         else:
             form = QuestionForm()
         context['form'] = form
@@ -212,3 +221,8 @@ def getallusersummary(request):
         return render(request, template_name="getallusersummary.html", context={"results":results})
     else:
         return render(request, template_name = '', context=context)
+
+@login_required(login_url="login")
+def canattempt(request, code):
+    q = Answers.objects.filter(user_id=request.user.id, question_code=code).annotate(Count('question_code'))
+    print(q)

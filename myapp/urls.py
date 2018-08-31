@@ -20,5 +20,5 @@ urlpatterns = [
     path('getuserattemptdata/', views.getuserattemptdata, name='getuserattemptdata'),
     path('getallusersummary/', views.getallusersummary, name='getallusersummary'),
     path('getuserperfdata/<int:uid>',views.getuserperfdata, name = 'getuserperfdata'),
-    
+    path('canattempt/<str:code>',views.canattempt, name = 'canattempt'),
 ]
