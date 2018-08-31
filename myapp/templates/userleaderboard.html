@@ -1,0 +1,88 @@
+{% include "header.html" %}
+{% load static %}
+<link rel="stylesheet" href="{% static "answer.css"%}"/>
+<style>
+    #hi{
+        font-weight: bolder;
+    }
+    #hello{
+       font-style: italic;
+       font-weight: bold;
+    }
+    .userattempt {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+    .userattempt:hover {
+        font-weight: bold;
+    }
+
+    .table {
+        font-size:1.2em;
+    }
+
+    .topheading {
+        text-align: center;
+        padding:30px;
+        background-color: #dddddd;
+    }
+</style>
+ <div class="container-fluid topheading">
+        <h1>Your Performance</h1> 
+</div>
+<div class="container">
+   
+<table id="leaderboard" class="table">
+    <thead>
+      <tr>
+        <th>Question</th>
+        <th>Score</th>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Grammar Errors</th>
+        <th>Spelling Errors</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for result in results %}
+      <tr>
+        <td class="userattempt" onclick = "getResults('{{result.7}}', '{{result.0}}')">{{result.0}}</td>
+        <td>{{result.1}}</td>
+        <td>{{result.2}}</td>
+        <td>{{result.3}}</td>
+        <td>{{result.4}}</td>
+        <td>{{result.5}}</td>
+        <td>{{result.6}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>       
+</div>
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+        
+            <!-- Modal content-->
+            <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="question"></h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                {% include "markedscript.html" %}
+            </div>
+            </div>   
+        </div>
+    </div>
+    {% include "footer.html" %}
+    <script src="{% static "displayresults.js" %}"></script>
+    <script src="{% static "retrieveuserresults.js" %}"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#leaderboard').DataTable();
+        } );
+    </script>
+</body>
+    </html>

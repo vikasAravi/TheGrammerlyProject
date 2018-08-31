@@ -70,6 +70,19 @@ def answer_view(request,qid):
     return render(request, template_name="answer.html",context = {'question': Question.objects.get(pk=qid), 'starttime':s})
 
 @login_required(login_url="login")
+def getanswerforuser(request):
+    if request.method == "POST":
+        uid = request.user.id
+        qid = request.POST['qid']
+        #print(uid, qid)
+        #get the json from DB in variable d
+        qs =  list(Answer.objects.filter(question_id = qid, user_id = uid))[0]
+        #d = json.loads(json.dumps(qs.Json))
+        #print(d)
+        #print(qs.Json)
+        return HttpResponse(qs.Json)
+
+@login_required(login_url="login")
 def get_results(request):
     if request.method == "POST":
         uid = request.POST['uid']
@@ -127,6 +140,17 @@ def leaderboard(request, qid):
             results.append((attempt.user, rank, attempt.score, datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M")))
             rank += 1
     return render(request, template_name="leaderboard.html", context={"results": results, "question":q})
+
+@login_required(login_url="login")
+def getuserperformance(request):
+    qs = Answer.objects.filter(user_id=request.user.id).order_by('-score').only("question_id", "score", "starttime", "endtime", "grammarErrors", "spellingErrors")
+    results = []
+    print(qs)
+    if qs:
+        for attempt in qs:
+            q = Question.objects.get(pk=attempt.question_id).question
+            results.append((q, attempt.score, datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M"), attempt.grammarErrors, attempt.spellingErrors, attempt.question_id))
+    return render(request, template_name="userleaderboard.html", context={"results": results})
 
 
 
