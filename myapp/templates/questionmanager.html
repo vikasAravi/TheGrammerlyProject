@@ -1,66 +1,101 @@
 {% load static %}
 {% load bootstrap4 %}
 {% include 'header.html' %}
-
-    <h1 style="text-align: center; margin:10px auto;">Question Manager</h1>
-    <div id="accordion" class="mt-4 container text-center">
-       
-                <div class="card mb-12">
-                    <div class="card-header" id="h{{question.id}}" role="button" data-toggle="collapse" data-target="#c{{question.id}}" aria-expanded="true" aria-controls="c{{question.id}}">
-                        <p style="font-size:2em;">Create a new question</p>
-                    </div>
-                    <div id="c{{question.id}}" class="collapse" aria-labelledby="h{{question.id}}" data-parent="#accordion">
-                        <div class="card-body">
-                            <form role="form" method="post">
-                                {% csrf_token %}
-                                <div class="row">
-                                <div class="col-md-12">
-                                    {%  bootstrap_field form.question %}
-                                </div>
-                                </div>
-                                <div class="row">
-                                <div class="col-md-4">
-                                    {%  bootstrap_field form.word_limit %}
-                                </div>
-                                <div class="col-md-4">
-                                        {%  bootstrap_field form.time_limit %}
-                                </div>
-                                <div class="col-md-4">
-                                        {%  bootstrap_field form.attempts_allowed %}
-                                </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Add Question</button>
-                                <button type="reset" class="btn btn-default">Reset</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                {% for question in object_list %}
-                    <div class="card">
-                        <div class="card-header" id="h{{question.id}}" role="button" data-toggle="collapse" data-target="#c{{question.id}}" aria-expanded="true" aria-controls="c{{question.id}}">
-                            <p>{{ question }}</p>
-                        </div>
-                        <div id="c{{question.id}}" class="collapse" aria-labelledby="h{{question.id}}" data-parent="#accordion">
-                            <div class="card-body">
+<style>
+ .input-group-btn button {
+    border-radius:0 5px 5px 0;
+    height:40px;
+ } 
+ .qcreate {
+     font-weight: bold;
+ }  
+</style>
+<h1 style="text-align: center; margin:10px auto;">Question Manager</h1>
+<div id="accordion" class="mt-4 container text-center">
     
-                                <!--TODO: this is very dirty right now. Need to style and allow editing of attempts and wordlimit
-                                    via AJAX queries-->
-                                <span>CODE:</span><span> {{question.code}}</span>
-                                <span>Attempts Allowed:</span><span> {{question.attemptsallowed}}</span><button class="btn btn-success">+</button>
-                                <span>Word limit:</span><input type="range" min="150" max="400" value="{{question.wordlimit}}"></button>
-
-                                <a href="{% url 'leaderboard' question.id %}"><button class="btn btn-success">Leaderboard</button></a>
-
-                                <a href="{% url 'delete' question.id %}"><button class="btn btn-danger">Delete</button></a>
-
+    <div class="card mb-12">
+        <div class="card-header" id="h{{question.id}}" role="button" data-toggle="collapse" data-target="#c{{question.id}}" aria-expanded="true" aria-controls="c{{question.id}}">
+            <p class="lead qcreate">Create a new question</p>
+        </div>
+        <div id="c{{question.id}}" class="collapse" aria-labelledby="h{{question.id}}" data-parent="#accordion">
+            <div class="card-body">
+                <form role="form" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                    <div class="col-md-12">
+                        {%  bootstrap_field form.question %}
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-md-4">
+                        {%  bootstrap_field form.word_limit %}
+                    </div>
+                    <div class="col-md-4">
+                            {%  bootstrap_field form.time_limit %}
+                    </div>
+                    <div class="col-md-4">
+                            {%  bootstrap_field form.attempts_allowed %}
+                    </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Question</button>
+                    <button type="reset" class="btn btn-default">Reset</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% for question in object_list %}
+        <div class="card">
+            <div class="card-header" id="h{{question.id}}" role="button" data-toggle="collapse" data-target="#c{{question.id}}" aria-expanded="true" aria-controls="c{{question.id}}">
+                <p class="lead">{{ question }}</p>
+            </div>
+            <div id="c{{question.id}}" class="collapse" aria-labelledby="h{{question.id}}" data-parent="#accordion">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="lead">CODE: {{question.code}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            Attempts Allowed
+                            <div class="input-group">
+                                    <input type="number" class="form-control" value="{{question.attempts_allowed}}" placeholder="Attempts Allowed">
+                                    <span class="input-group-btn" >
+                                        <button class="btn btn-success" type="button">Set</button>
+                                    </span>
+                                </div>
+                        </div>
+                        <div class="col-md-4">
+                            Word Limit
+                            <div class="input-group">
+                                <input type="number" class="form-control" value="{{question.word_limit}}" placeholder="Word Limit">
+                                <span class="input-group-btn" >
+                                    <button class="btn btn-success" type="button">Set</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                                Time Limit (minutes)
+                                <div class="input-group">
+                                    <input type="number" class="form-control" value="{{question.time_limit}}" placeholder="Word Limit">
+                                    <span class="input-group-btn" >
+                                        <button class="btn btn-success" type="button">Set</button>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                {% endfor %}
-    </div>
+                <a href="{% url 'leaderboard' question.id %}"><button class="btn btn-success btn-lg">Leaderboard</button></a>
 
-    <div style="height:30px;"></div>
+                <a href="{% url 'delete' question.id %}"><button class="btn btn-danger">Delete</button></a>
+                <div style="height:20px;"></div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
-    {% include 'footer.html' %}
+<div style="height:30px;"></div>
+
+{% include 'footer.html' %}
 </body>
 </html>

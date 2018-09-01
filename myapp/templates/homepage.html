@@ -48,6 +48,8 @@
       </header>
 
 {% include "footer.html" %}
+
+{% if not user.is_staff %}
 <script>
     function getCookie(name) {
         var cookieValue = null;
@@ -98,6 +100,7 @@
         })
     }
 </script>
+{% endif %}
 </body>
 </html>
 
