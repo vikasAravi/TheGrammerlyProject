@@ -1,21 +1,36 @@
 {% load static %}
 {% load bootstrap4 %}
 {% include 'header.html' %}
-<div class="masthead text-center">
-    <h1>Question Manager</h1>
-    <div id="accordion" class="mt-4 container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card mb-4">
+
+    <h1 style="text-align: center; margin:10px auto;">Question Manager</h1>
+    <div id="accordion" class="mt-4 container text-center">
+       
+                <div class="card mb-12">
                     <div class="card-header" id="h{{question.id}}" role="button" data-toggle="collapse" data-target="#c{{question.id}}" aria-expanded="true" aria-controls="c{{question.id}}">
-                        Create a new question
+                        <p style="font-size:2em;">Create a new question</p>
                     </div>
                     <div id="c{{question.id}}" class="collapse" aria-labelledby="h{{question.id}}" data-parent="#accordion">
-                        <div class="card-body d-flex flex-wrap">
-                            <form method="post">
+                        <div class="card-body">
+                            <form role="form" method="post">
                                 {% csrf_token %}
-                                {% bootstrap_form form %}
-                                <input type="submit" name="commit" value="Add" tabindex="3" class="btn btn-primary btn-block">
+                                <div class="row">
+                                <div class="col-md-12">
+                                    {%  bootstrap_field form.question %}
+                                </div>
+                                </div>
+                                <div class="row">
+                                <div class="col-md-4">
+                                    {%  bootstrap_field form.word_limit %}
+                                </div>
+                                <div class="col-md-4">
+                                        {%  bootstrap_field form.time_limit %}
+                                </div>
+                                <div class="col-md-4">
+                                        {%  bootstrap_field form.attempts_allowed %}
+                                </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add Question</button>
+                                <button type="reset" class="btn btn-default">Reset</button>
                             </form>
                         </div>
                     </div>
@@ -42,10 +57,10 @@
                         </div>
                     </div>
                 {% endfor %}
-            </div>
-        </div>
     </div>
-</div>
+
+    <div style="height:30px;"></div>
 
     {% include 'footer.html' %}
+</body>
 </html>

@@ -60,7 +60,6 @@ def questionmanager(request):
                 question.user = request.user
                 question.code = code
                 question.save()
-                print(question)
         else:
             form = QuestionForm()
         context['form'] = form
@@ -116,7 +115,7 @@ def getanswerforuser(request):
 
 @login_required(login_url="login")
 def get_results(request):
-    if request.use.is_staff and request.method == "POST":
+    if request.user.is_staff and request.method == "POST":
         uid = request.POST['uid']
         qid = request.POST['qid']
         #print(uid, qid)

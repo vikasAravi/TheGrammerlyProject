@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 class Question(models.Model):
-    question = models.TextField()
+    question = models.CharField(max_length = 500)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.CharField(max_length = 8,unique = True)
     word_limit = models.IntegerField(default=150)
