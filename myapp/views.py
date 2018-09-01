@@ -67,7 +67,7 @@ def questionmanager(request):
         context['object_list'] = Question.objects.filter(user_id=request.user.id)
         return render(request, template_name = 'questionmanager.html', context=context)
     else:
-        return render(request, template_name = '', context=context)
+        return redirect('homepage')
 
 @login_required(login_url="login")
 def practice(request):
@@ -81,9 +81,25 @@ def main_view(request):
 
 
 @login_required(login_url="login")
-def attempt(request,qid):
+def attempt(request,code):
     s = datetime.strftime(datetime.now(), datetimeformat)
-    return render(request, template_name="answer.html",context = {'question': Question.objects.get(pk=qid), 'starttime':s})
+    
+    q = Question.objects.get(code=code)
+    a = list(Answer.objects.filter(user_id=request.user.id,question_id=q.id))
+    if len(a) < q.attempts_allowed:
+        return render(request, template_name="attempt.html",context = {'question': q, 'starttime':s})
+    else:
+        return redirect('homepage')
+
+
+@login_required(login_url="login")
+def canattempt(request, code):
+    q = Question.objects.get(code=code)
+    a = list(Answer.objects.filter(user_id=request.user.id,question_id=q.id))
+    if len(a) < q.attempts_allowed:
+        return JsonResponse({"status":"OK", "url":request.build_absolute_uri("/attempt/"+code)})
+    else:
+        return JsonResponse({"status":"You have already reached maximum attempt limit. Please try with diferent code or practice!"})
 
 @login_required(login_url="login")
 def getanswerforuser(request):
@@ -145,7 +161,7 @@ def delete_question(request, qid):
             question.delete()
             return redirect('home')
     else:
-        return render(request, template_name = '', context=context)
+        return redirect('homepage')
 
 @login_required(login_url="login")
 def leaderboard(request, qid):
@@ -160,7 +176,7 @@ def leaderboard(request, qid):
                 rank += 1
         return render(request, template_name="leaderboard.html", context={"results": results, "question":q})
     else:
-        return render(request, template_name = '', context=context)
+        return redirect('homepage')
 
 @login_required(login_url="login")
 def getuserattemptdata(request):
@@ -220,12 +236,4 @@ def getallusersummary(request):
         
         return render(request, template_name="getallusersummary.html", context={"results":results})
     else:
-        return render(request, template_name = '', context=context)
-
-@login_required(login_url="login")
-def canattempt(request, code):
-    q = Answers.objects.filter(user_id=request.user.id, question_code=code).annotate(Count('question_code'))
-    #idea is to see how many attempts he has made and what is allowed for this question
-    #if allowed return json {"status":"OK", "url":"/attempt/qid"}
-    #else return json {"status":"You have reached the maximum limit to answer this question. Try other!"}
-    print(q)
+        return redirect('homepage')

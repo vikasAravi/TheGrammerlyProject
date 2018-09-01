@@ -23,4 +23,4 @@ class MyUserCreationForm(UserCreationForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ["question", "attemptsallowed", "wordlimit"]
+        fields = ["question", "attempts_allowed", "word_limit", "time_limit"]

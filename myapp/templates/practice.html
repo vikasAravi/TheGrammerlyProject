@@ -12,7 +12,7 @@
 {% for question in object_list %}
   <tr>
     <td class="lead">{{ question }}</td>
-    <td><a href="{% url 'attempt' question.id %}"><button class="btn btn-success my-auto">attempt</button></a></td>
+    <td><a href="{% url 'attempt' question.code %}"><button class="btn btn-success my-auto">attempt</button></a></td>
   </tr>
 {% endfor %}
 </tbody>

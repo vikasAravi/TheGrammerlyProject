@@ -15,18 +15,18 @@
     <div class="container">
         <div class="row">
                 <h3 class="col-sm-8 col-md-8">{{ question.question }}</h3>
-                <h4 class="col-sm-3 col-md-3" id="time"></h4>
+                <h4 class="col-sm-3 col-md-3" id="time">{{question.time_limit}}</h4>
         </div>
         <div class="row">
             <div class="col-sm-1 col-md-1"></div>
-            <textarea class="col-sm-10 col-md-10" id="id_answer" rows="20" cols="120" placeholder="Write your essay here"></textarea>
+            <textarea class="col-sm-10 col-md-10" id="id_answer" rows="10" cols="120" placeholder="Write your essay here"></textarea>
 
             <p class="col-sm-10 col-md-10" id='essay'></p>
             <div class="col-sm-1 col-md-1"></div>
         </div>
         <div class="row">
             <div class="col-sm-2 col-md-2"></div>
-            <h4 class="col-sm-4 col-md-4" id="wordcount"></h4>
+            <h4 class="col-sm-4 col-md-4" id="wordcount">{{question.word_limit}}</h4>
             <button class="col-sm-4 col-md-4 btn btn-primary btn-lg" type="button"
                     id="submit_button">Submit</button>
         </div>
@@ -56,10 +56,11 @@
                 </tbody>
             </table>
         </div>
-</body>
+    </div>
+    <div style="height:30px;"></div>
 {% include "footer.html" %}
 <script src="{% static "displayresults.js" %}"></script>
 <script src="{% static "userattempt.js" %}"></script>
 
-
+</body>
 </html>

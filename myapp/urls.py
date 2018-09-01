@@ -7,7 +7,7 @@ from . import views
 urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('signup/', views.SignUp.as_view(), name='signup'),
-    path('attempt/<int:qid>', views.attempt, name='attempt'),
+    path('attempt/<str:code>', views.attempt, name='attempt'),
     path('questionmanager',views.questionmanager,name='questionmanager'),
     path('questionmanager/del/<int:qid>',views.delete_question, name = 'delete'),
     path('',views.main_view,name='homepage'),

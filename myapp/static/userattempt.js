@@ -66,7 +66,9 @@ var updateTimer = function () {
 
 }
 
-var timer = setInterval(updateTimer, 1000);
+
+
+var timer; 
 //Timer functionality ends
 
 function wordCount(val) {
@@ -80,12 +82,28 @@ window.onbeforeunload = function (e) {
     return ''
 }
 
-var textarea = document.getElementById("id_answer");
-var result = document.getElementById("wordcount");
-textarea.addEventListener("input", function () {
-    var v = wordCount(this.value);
-    result.innerHTML = (
-        v.words + " words"
-    );
-}, false);
+var textarea;
+var result;
 
+
+
+
+$(function() {
+    textarea =  document.getElementById("id_answer");
+    result = document.getElementById("wordcount");
+    timelimit = parseInt($('#time').text())*60;
+    wordlimit = parseInt($('#wordcount').text());
+    //console.log(timelimit, wordlimit);
+    timer = setInterval(updateTimer, 1000);
+    textarea.addEventListener("input", function () {
+        var v = wordCount(this.value);
+        var str = v.words + " words (" + wordlimit + ")"
+        var f;
+        if(v.words < wordlimit) {
+            f = str.fontcolor('red');
+        } else {
+            f = str.fontcolor('green');
+        }
+        result.innerHTML = f;
+    }, false);
+})

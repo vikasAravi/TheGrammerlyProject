@@ -38,10 +38,6 @@
                 </span>
                 </div>
                 <a href="{% url "practice" %}"><button class="btn btn-primary mt-5 btn-xl">Practice</button></a>
-                <!--form to enter testcode and button to lead there. Note that first we need to check 
-                    via AJAX whether user has already reached the required limit. else we do the submit that 
-                    redirects to appropriate page to answer that question
-                -->
                 <a href="{% url "getuserperformance" %}"><button class="btn btn-success mt-5 btn-xl">Your Stats</button></a>
             </div>
             
@@ -93,8 +89,9 @@
         var code = $('#code').val();
         //make ajax call and on response success relocate to the attempt page else alert error
         $.getJSON("/canattempt/"+code, function(data) {
+            console.log(data)
             if(data['status']=='OK') {
-                window.location(data["url"]);
+                window.location.href = data["url"];
             } else {
                 alert(data['status']);
             }
