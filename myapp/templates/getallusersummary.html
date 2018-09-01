@@ -20,8 +20,9 @@
     .table {
         font-size:1.2em;
     }
-</style>
 
+</style>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
 <div class="masthead text-center">
     <h1>Test Takers Performance</h1>
 <div class="container">
@@ -65,11 +66,18 @@
     </div>
     </div>
     {% include "footer.html" %}
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>  
     <script>
         $(document).ready(function() {
-            $('#leaderboard').DataTable();
+            $('#leaderboard').DataTable({
+                lengthMenu: [
+                    [ 25, 50, 100, -1 ],
+                    [ '25', '50', '100', 'All' ]
+                ],
+                buttons: [
+                    'pageLength'
+                ]
+            });
         } );
         //make ajax call
     </script>

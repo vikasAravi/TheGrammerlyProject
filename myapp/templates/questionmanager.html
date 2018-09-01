@@ -13,6 +13,7 @@
      margin-bottom:30px;
  }
 </style>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
 <h1 style="text-align: center; margin:10px auto;">Question Manager</h1>
 <div class="container text-center">
     <div id="qform" class="card mb-12">
@@ -73,11 +74,18 @@
 <div style="height:30px;"></div>
 
 {% include 'footer.html' %}
-<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#questions').DataTable();
+        $('#questions').DataTable({
+                lengthMenu: [
+                    [ 25, 50, 100, -1 ],
+                    [ '25', '50', '100', 'All' ]
+                ],
+                buttons: [
+                    'pageLength'
+                ]
+            });
     } );
 </script>
 </body>
