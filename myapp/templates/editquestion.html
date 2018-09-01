@@ -1,0 +1,44 @@
+{% load static %}
+{% load bootstrap4 %}
+{% include 'header.html' %}
+<style>
+ .input-group-btn button {
+    border-radius:0 5px 5px 0;
+    height:40px;
+ } 
+ .qcreate {
+     font-weight: bold;
+ }  
+ #qform {
+     margin-bottom:30px;
+ }
+</style>
+<h1 style="text-align: center; margin:10px auto;">Question Editor</h1>
+<div class="container masthead text-center">
+    <form role="form" method="post">
+            {% csrf_token %}
+            <div class="row">
+            <div class="col-md-12">
+                {%  bootstrap_field form.question %}
+            </div>
+            </div>
+            <div class="row">
+            <div class="col-md-4">
+                {%  bootstrap_field form.word_limit %}
+            </div>
+            <div class="col-md-4">
+                    {%  bootstrap_field form.time_limit %}
+            </div>
+            <div class="col-md-4">
+                    {%  bootstrap_field form.attempts_allowed %}
+            </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Edit Question</button>
+            <button type="reset" class="btn btn-default">Reset</button>
+        </form>
+</div>
+<div style="height:30px;"></div>
+
+{% include 'footer.html' %}
+</body>
+</html>

@@ -21,4 +21,6 @@ urlpatterns = [
     path('getallusersummary/', views.getallusersummary, name='getallusersummary'),
     path('getuserperfdata/<int:uid>',views.getuserperfdata, name = 'getuserperfdata'),
     path('canattempt/<str:code>',views.canattempt, name = 'canattempt'),
+    path('updatequestion/<int:pk>',views.EditQuestion.as_view(), name = 'updatequestion'),
+    
 ]

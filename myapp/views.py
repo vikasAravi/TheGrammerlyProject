@@ -12,7 +12,7 @@ from . models import Question, Answer,User
 from django.http import HttpResponse,HttpResponseRedirect, JsonResponse
 from .checker.report import Report
 import json
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import redirect
 from datetime import datetime
 from django.db.models import Avg
@@ -37,11 +37,6 @@ class SignUp(generic.CreateView):
             return HttpResponseRedirect('/login/')
         return render(request,'signup.html',{'form': form})
 
-
-# class QuestionsListView(LoginRequiredMixin,ListView):
-#     login_url = "login"
-#     template_name = "home.html"
-#     model = Question
 
 @login_required(login_url="login")
 def questionmanager(request):
@@ -132,14 +127,12 @@ def get_results(request):
 @login_required(login_url="login")
 def fetch_results(request):
     if request.method == "POST":
-        d = Report(request.POST['essay']).reprJSON()
         essay = request.POST['essay']
         qid = request.POST['qid']
+        q = Question.objects.get(pk=qid)
         starttime = datetime.strptime(request.POST['starttime'], datetimeformat)
         endtime = datetime.now()
-        qs = Answer.objects.filter(question_id = qid, user_id = request.user.id)
-        if qs:
-            qs.delete()
+        d = Report(essay, q.word_limit).reprJSON()
         score = d['score']
         grammarCount = d['grammarErrorCount']
         spellingCount = d['spellingErrorCount']
@@ -150,6 +143,36 @@ def fetch_results(request):
         return HttpResponse(json_object)
 
 @login_required(login_url="login")
+def updatequestion(request, qid):
+    if request.user.is_staff:
+        form = QuestionForm(request.POST)
+        q = Question.objects.get(pk = qid)
+        return render(request,"editquestion.html",{'form':form})
+        
+@login_required(login_url="login")
+def getquestiondata(request, qid):
+    if request.user.is_staff:
+        obj = Question.objects.get(pk = qid)
+        return JsonResponse({"wordlimit":obj.word_limit, "timelimit":obj.time_limit, "attempts":obj.attempts})
+
+class EditQuestion(PermissionRequiredMixin,LoginRequiredMixin,generic.UpdateView):
+    login_url = '/login/'
+    model = Question
+    form_class = QuestionForm
+    template_name = 'editquestion.html'
+    success_url = reverse_lazy("questionmanager")
+
+    def has_permission(self):
+        question  = Question.objects.get(id=self.kwargs['pk'])
+        return question.user == self.request.user
+
+    def has_no_permission(self):
+        if self.raise_exception:
+            raise PermissionDenied(self.get_permission_denied_message())
+        return redirect(self.request.META.get("HTTP_REFERER"))
+
+
+@login_required(login_url="login")
 def delete_question(request, qid):
     if request.user.is_staff:
         question = Question.objects.get(pk=qid)
@@ -158,7 +181,7 @@ def delete_question(request, qid):
             return HttpResponse("Not allowed")
         else:
             question.delete()
-            return redirect('home')
+            return redirect('questionmanager')
     else:
         return redirect('homepage')
 
@@ -208,7 +231,7 @@ def getuserperformance(request):
         avgscore /= totalattempts
         lastattempted = sorted(attempttimes)[-1]
     
-    return render(request, template_name="userperformance.html", context={"results": results, "user":request.user.id, "avgscore":avgscore, "totalattempts":totalattempts, "lastattempted":lastattempted})
+    return render(request, template_name="userperformance.html", context={"results": results, "user":request.user, "avgscore":avgscore, "totalattempts":totalattempts, "lastattempted":lastattempted})
 
 @login_required(login_url="login")
 def getuserperfdata(request, uid):
@@ -227,7 +250,7 @@ def getuserperfdata(request, uid):
 @login_required(login_url="login")
 def getallusersummary(request):
     if request.user.is_staff:
-        qs = Answer.objects.filter(question__user_id=request.user.id).select_related().values("user_id").annotate(Avg('score'), Count('question'), Max('starttime'))
+        qs = Answer.objects.filter(question__user_id=request.user.id, score__gt = 4).select_related().values("user_id").annotate(Avg('score'), Count('question'), Max('starttime'))
         results = []
         for result in qs:
             u = User.objects.get(pk=result['user_id'])
