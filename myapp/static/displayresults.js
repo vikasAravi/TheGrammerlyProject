@@ -69,7 +69,6 @@ var highlightErrors = function (text, errors) {
     for (var i = 0; i < errors.length; i++) {
         offset = errors[i].offset;
         length = errors[i].length;
-        console.log(offset, length);
         appendElem(e, showError(
             text.substring(offset, offset + length),
             errors[i]

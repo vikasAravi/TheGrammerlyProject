@@ -89,10 +89,7 @@ def signup(request):
                         mail_subject, message, to=[to_email]
             )
             email.send()
-            #TODO:Create a nice page for confirmation and use that
-            return HttpResponse('Please confirm your email address to complete the registration')
-        else:
-            messages.error(request, _('Please correct the error below.'))
+            return render(request, 'registration/message.html', {'message':'Please confirm your email address to complete the registration'})
     else:
         user_form = UserForm()
         profile_form = ProfileForm()
@@ -146,10 +143,8 @@ def activate(request, uidb64, token, backend='django.contrib.auth.backends.Model
         user.save()
         login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         return redirect('homepage')
-        #return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
-        #TODO:make some nice page for this
-        return HttpResponse('Activation link is invalid!')
+        return render(request, 'registration/message.html', {"message":'Activation link is invalid!'})
 
 @login_required(login_url="login")
 def questionmanager(request):
