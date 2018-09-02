@@ -318,7 +318,7 @@ def leaderboard(request, qid):
         if qs:
             rank = 1
             for attempt in qs:
-                results.append((attempt.user, rank, attempt.score, datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M")))
+                results.append((attempt.user, rank, round(attempt.score,2), datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M")))
                 rank += 1
         return render(request, template_name="leaderboard.html", context={"results": results, "question":q})
     else:
@@ -330,7 +330,7 @@ def getuserattemptdata(request):
     data = []
     labels = []
     for x in a:
-        data.append(x.score)
+        data.append(round(x.score,2))
         labels.append(x.starttime)
     return JsonResponse({"data":data, "labels":labels})
 
@@ -355,12 +355,12 @@ def getuserperformance(request):
             totalattempts += 1
             attempttimes.append(attempt.starttime)
             q = Question.objects.get(pk=attempt.question_id).question
-            results.append((q, attempt.score, datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M"), attempt.grammarErrors, attempt.spellingErrors, attempt.question_id))
+            results.append((q, round(attempt.score,2), datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M"), attempt.grammarErrors, attempt.spellingErrors, attempt.question_id))
     if(totalattempts>0):
         avgscore /= totalattempts
         lastattempted = sorted(attempttimes)[-1]
     
-    return render(request, template_name="userperformance.html", context={"results": results, "user":request.user, "avgscore":avgscore, "totalattempts":totalattempts, "lastattempted":lastattempted})
+    return render(request, template_name="userperformance.html", context={"results": results, "user":request.user, "avgscore":round(avgscore,2), "totalattempts":totalattempts, "lastattempted":lastattempted})
 
 @login_required(login_url="login")
 def getuserperfdata(request, uid):
@@ -369,7 +369,7 @@ def getuserperfdata(request, uid):
         data = []
         labels = []
         for x in a:
-            data.append(x.score)
+            data.append(round(x.score,2))
             labels.append(x.starttime)
         return JsonResponse({"data":data, "labels":labels})
     else:
@@ -390,7 +390,7 @@ def getallusersummary(request):
         results = []
         for result in qs:
             u = User.objects.get(pk=result['user_id'])
-            results.append({"userid":result['user_id'], "username":u.username, "profile":u.profile, "avgscore":result['score__avg'], "count":result['question__count'], "lastattempted":result['starttime__max']})
+            results.append({"userid":result['user_id'], "username":u.username, "profile":u.profile, "avgscore":round(result['score__avg'],2), "count":result['question__count'], "lastattempted":result['starttime__max']})
         attrs = {"minscore":minscore, "maxscore":maxscore}
         return render(request, template_name="getallusersummary.html", context={"results":results, "attrs":attrs})
     else:

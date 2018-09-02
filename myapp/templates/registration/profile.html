@@ -1,19 +1,23 @@
-
-{% load bootstrap4 %}
-{% load static %}
-{% include "header.html" %}
-<div class="container">
-        <div class="row-1">
-            <div class="d-flex flex-column col-sm-9 col-md-7 col-lg-5 mx-auto my-5">
-                <div class="card card-signup p-2">
-                    <div class="card-body">
-                        {{user}}
-                        {{profile}}
-                    </div>
-                </div>
+ {% load bootstrap4 %}
+ {% load static %}
+ {% include "header.html" %}
+<div class="container masthead text-center" style="margin-top:30px">
+    <div class="row-1">
+        <div class="card">
+            <div class="card-header">
+                {{user}}
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{profile.name}}</h5>
+                <p class="card-text">{{user.email}}</p>
+                <p class="card-text">{{profile.college}}</p>
+                <p class="card-text">{{profile.college_id}}</p>
+                <p class="card-text">{{profile.branch_of_study}}</p>
             </div>
         </div>
     </div>
+</div>
 {% include "footer.html" %}
 </body>
+
 </html>
