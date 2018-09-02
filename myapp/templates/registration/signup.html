@@ -3,24 +3,72 @@
 {% load bootstrap4 %}
 {% load static %}
 {% include "header.html" %}
+<style>
+    .text-center {
+        justify-content: center;
+    }
 
+    .splbtn {
+        margin: 0 20px;
+    }
 
-    <div class="container">
-        <div class="row-1">
-            <div class="d-flex flex-column col-sm-9 col-md-7 col-lg-5 mx-auto my-5">
-                <div class="card card-signup p-2">
-                    <div class="card-body">
-                        <form method="post">
-                            {% csrf_token %}
-                            {% bootstrap_form user_form %}
-                            {% bootstrap_form profile_form %}
-                            <input type="submit" name="commit" value="Signup" tabindex="3" class="btn btn-primary btn-block" data-disable-with="Logging in…">
-                        </form>
-                    </div>
+    .card {
+        margin: 30px 0;
+    }
+</style>
+
+<div class="container">
+    <div class="card mb-12">
+    <div class="card-header">
+        <h2 class="heading text-center">Signup</h2>
+    </div>
+    <div class="card-body">
+        <form role="form" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-4">
+                    {%  bootstrap_field user_form.username %}
+                </div>
+                <div class="col-md-4">
+                    {%  bootstrap_field user_form.email %}
                 </div>
             </div>
-        </div>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-4">
+                    {%  bootstrap_field user_form.password1 %}
+                </div>
+                <div class="col-md-4">
+                    {%  bootstrap_field user_form.password2 %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-4">
+                    {%  bootstrap_field profile_form.name %}
+                </div>
+                <div class="col-md-4">
+                    {%  bootstrap_field profile_form.college_id %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-4">
+                    {%  bootstrap_field profile_form.college %}
+                </div>
+                <div class="col-md-4">
+                    {%  bootstrap_field profile_form.branch_of_study %}
+                </div>
+            </div>
+            <div class="row text-center">
+                <button type="submit" class="splbtn btn btn-primary btn-lg">Submit</button>
+                <button type="reset" class="splbtn btn btn-default btn-lg">Reset</button>
+            </div>
+        </form>
     </div>
+</div>
+</div>
 
 {% include "footer.html" %}
 </body>
