@@ -24,7 +24,7 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ml-auto">
         {% if user.is_authenticated %}
-          <a class="nav-item nav-link pr-5">Hi {{ user.username }}!</a>
+          <a class="nav-item nav-link pr-5" href="{% url "profile" %}">Hi {{ user.username }}!</a>
           <a class="nav-item nav-link pr-2" href="{% url "logout" %}">Logout</a>
         {% else %}
             <a class="nav-item nav-link pr-5"  href="{% url "login" %}">Login</a>

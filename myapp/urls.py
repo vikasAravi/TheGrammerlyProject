@@ -1,12 +1,14 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic.base import TemplateView
 from . import views
 
 
 urlpatterns = [
     path('', include('django.contrib.auth.urls')),
-    path('signup/', views.SignUp.as_view(), name='signup'),
+    path('signup/', views.signup, name='signup'),
+    path('profile/', views.update_profile, name='profile'),
+    path('activate/<str:uidb64>/<str:token>', views.activate, name='activate'),
     path('attempt/<str:code>', views.attempt, name='attempt'),
     path('questionmanager',views.questionmanager,name='questionmanager'),
     path('questionmanager/del/<int:qid>',views.delete_question, name = 'delete'),

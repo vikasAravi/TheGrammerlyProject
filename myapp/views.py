@@ -6,9 +6,15 @@ from django.views.generic import ListView
 # Create your views here.
 from django.urls import reverse_lazy
 from django.db.models import Avg, Count, Max
+from django.db import transaction
 from django.views import generic
-from . forms import MyUserCreationForm, QuestionForm
+from . forms import UserForm, QuestionForm, ProfileForm
 from . models import Question, Answer,User
+from django.contrib.sites.shortcuts import get_current_site
+from .tokens import account_activation_token
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_text
 from django.http import HttpResponse,HttpResponseRedirect, JsonResponse
 from .checker.report import Report
 import json
@@ -16,27 +22,134 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.shortcuts import redirect
 from datetime import datetime
 from django.db.models import Avg
+from django.core.mail import EmailMessage
+from django.contrib.auth import login, authenticate
 import random
 import string
 #from . misc import score_calculator
 
 datetimeformat = "%Y %d %m %H:%M"
 
-class SignUp(generic.CreateView):
-    form_class = MyUserCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'signup.html'
 
-    def post(self,request, *args, **kwargs):
-        form = MyUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit = False)
-            if request.POST['role'] == 'creator':
-                user.is_staff = True
+@login_required(login_url="login")
+#@transaction.atomic
+def update_profile(request):
+    # if request.method == 'POST':
+    #     user_form = UserForm(request.POST, instance=request.user)
+    #     profile_form = ProfileForm(request.POST, instance=request.user.profile)
+    #     if user_form.is_valid() and profile_form.is_valid():
+    #         user_form.save()
+    #         profile_form.save()
+    #         messages.success(request, _('Your profile was successfully updated!'))
+    #         return redirect('settings:profile')
+    #     else:
+    #         messages.error(request, _('Please correct the error below.'))
+    # else:
+    #     user_form = UserForm(instance=request.user)
+    #     profile_form = ProfileForm(instance=request.user.profile)
+    # return render(request, 'registration/profile.html', {
+    #     'user_form': user_form,
+    #     'profile_form': profile_form
+    # })
+    return render(request, 'registration/profile.html', {
+        'user': request.user,
+        'profile': request.user.profile
+    })
+
+def signup(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST)
+        profile_form = ProfileForm(request.POST)
+        user_form = UserForm(request.POST)
+        profile_form = ProfileForm(request.POST)
+        if user_form.is_valid() and profile_form.is_valid():
+            profile = profile_form.save(commit = False)
+            user = user_form.save(commit = False)
+            user.is_active = False
             user.save()
-            return HttpResponseRedirect('/login/')
-        return render(request,'signup.html',{'form': form})
+            user.profile.name = profile.name
+            user.profile.college = profile.college
+            user.profile.college_id = profile.college_id
+            user.profile.branch_of_study = profile.branch_of_study
+            user.save()
+            
+            
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your grammar check account.'
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            tok = account_activation_token.make_token(user)          
+            message = render_to_string('acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid':uid.decode('utf-8'),
+                'token':tok,
+            })
+            to_email = user_form.cleaned_data.get('email')
+            email = EmailMessage(
+                        mail_subject, message, to=[to_email]
+            )
+            email.send()
+            #TODO:Create a nice page for confirmation and use that
+            return HttpResponse('Please confirm your email address to complete the registration')
+        else:
+            messages.error(request, _('Please correct the error below.'))
+    else:
+        user_form = UserForm()
+        profile_form = ProfileForm()
+    return render(request, 'registration/signup.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
 
+# class SignUp(generic.CreateView):
+#     form_class = UserForm
+#     success_url = reverse_lazy('login')
+#     template_name = 'registration/signup.html'
+
+#     def post(self,request, *args, **kwargs):
+#         user_form = UserForm(request.POST)
+#         profile_form = ProfileForm(request.POST)
+#         if user_form.is_valid() and profile_form.is_valid():
+#             user = user_form.save(commit = False)
+#             user.is_active = False
+#             user.save()
+#             profile_form.save()
+#             current_site = get_current_site(request)
+#             mail_subject = 'Activate your grammar check account.'
+#             uid = urlsafe_base64_encode(force_bytes(user.pk))
+#             tok = account_activation_token.make_token(user)          
+#             message = render_to_string('acc_active_email.html', {
+#                 'user': user,
+#                 'domain': current_site.domain,
+#                 'uid':uid.decode('utf-8'),
+#                 'token':tok,
+#             })
+#             to_email = user_form.cleaned_data.get('email')
+#             email = EmailMessage(
+#                         mail_subject, message, to=[to_email]
+#             )
+#             email.send()
+#             #TODO:Create a nice page for confirmation and use that
+#             return HttpResponse('Please confirm your email address to complete the registration')
+#         else:
+#             return render(request,'registration/signup.html',{'user_form': user_form, 'profile_form': profile_form})
+
+def activate(request, uidb64, token, backend='django.contrib.auth.backends.ModelBackend'):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        return redirect('homepage')
+        #return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        #TODO:make some nice page for this
+        return HttpResponse('Activation link is invalid!')
 
 @login_required(login_url="login")
 def questionmanager(request):
@@ -282,7 +395,7 @@ def getallusersummary(request):
         results = []
         for result in qs:
             u = User.objects.get(pk=result['user_id'])
-            results.append({"userid":result['user_id'], "username":u.username, "avgscore":result['score__avg'], "count":result['question__count'], "lastattempted":result['starttime__max']})
+            results.append({"userid":result['user_id'], "username":u.username, "profile":u.profile, "avgscore":result['score__avg'], "count":result['question__count'], "lastattempted":result['starttime__max']})
         attrs = {"minscore":minscore, "maxscore":maxscore}
         return render(request, template_name="getallusersummary.html", context={"results":results, "attrs":attrs})
     else:

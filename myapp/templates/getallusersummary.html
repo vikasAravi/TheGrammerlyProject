@@ -54,6 +54,9 @@
     <thead>
       <tr>
         <th>User</th>
+        <th>Name</th>
+        <th>College ID</th>
+        <th>Branch</th>
         <th>Average Score</th>
         <th>Total Attempts</th>
         <th>Last Attempt Time</th>
@@ -63,6 +66,9 @@
       {% for result in results %}
       <tr>
         <td class="userattempt" onclick = "showUserChart('{{result.userid}}', '{{result.username}}')">{{result.username}}</td>
+        <td>{{result.profile.name}}</td>
+        <td>{{result.profile.college_id}}</td>
+        <td>{{result.profile.branch_of_study}}</td>
         <td>{{result.avgscore}}</td>
         <td>{{result.count}}</td>
         <td>{{result.lastattempted}}</td>

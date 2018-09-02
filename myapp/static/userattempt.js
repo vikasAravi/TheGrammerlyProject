@@ -2,7 +2,6 @@
 var wordlimit = 150;
 
 var submitEssay = function (e) {
-    $( window ).unload(null);
     //TODO: decide about word limit
     clearInterval(timer);
     $('#loader').show();
