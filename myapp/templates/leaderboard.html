@@ -15,12 +15,17 @@
         padding:30px;
         background-color: #dddddd;
     }
+
+    #leaderboard_wrapper {
+        margin-bottom: 30px;
+    }
 </style>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
 <div class="masthead text-center">
  <div class="container-fluid topheading">
         <h2>Leaderboard</h2> 
         <p>{{question}}</p> 
+        <p>Total Attempts: <span id="count"></span></p> 
 </div>
 <div class="container">
    
@@ -71,7 +76,7 @@
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>    
     <script>
         $(document).ready(function() {
-            $('#leaderboard').DataTable({
+            var mytable = $('#leaderboard').DataTable({
                 lengthMenu: [
                     [ 25, 50, 100, -1 ],
                     [ '25', '50', '100', 'All' ]
@@ -80,6 +85,7 @@
                     'pageLength'
                 ]
             });
+            $('#count').text(mytable.data().length);
         } );
     </script>
 </body>

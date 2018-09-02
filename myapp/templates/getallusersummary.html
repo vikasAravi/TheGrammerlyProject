@@ -18,6 +18,11 @@
     .stats {
         margin-top:20px;
     }
+
+    #analyticstable_wrapper {
+        margin-bottom: 30px;
+    }
+
 </style>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
 
@@ -45,7 +50,7 @@
 </div>
 <div class="container">
    
-<table id="leaderboard" class="table">
+<table id="analyticstable" class="table">
     <thead>
       <tr>
         <th>User</th>
@@ -95,7 +100,7 @@
                 var b = Math.floor((Math.random() * 256));
                 return 'rgba('+r+', '+g+', '+b+', 0.5)';
             }
-            var mytable = $('#leaderboard').DataTable({
+            var mytable = $('#analyticstable').DataTable({
                 lengthMenu: [
                     [ 25, 50, 100, -1 ],
                     [ '25', '50', '100', 'All' ]
