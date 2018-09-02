@@ -1,15 +1,13 @@
 from django.shortcuts import render
 from simplejson import dumps
 from django.contrib.auth.decorators import login_required
-#from django.contrib.auth.mixins import
 from django.views.generic import ListView
-# Create your views here.
 from django.urls import reverse_lazy
 from django.db.models import Avg, Count, Max
 from django.db import transaction
 from django.views import generic
 from . forms import UserForm, QuestionForm, ProfileForm
-from . models import Question, Answer,User
+from . models import Question, Answer, User, Profile
 from django.contrib.sites.shortcuts import get_current_site
 from .tokens import account_activation_token
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -57,6 +55,9 @@ def update_profile(request):
     })
 
 def signup(request):
+    c = Profile.objects.order_by().values_list('college').distinct()
+    colleges = [col[0] for col in c if col[0]]
+    print(colleges)
     if request.method == 'POST':
         user_form = UserForm(request.POST)
         profile_form = ProfileForm(request.POST)
@@ -95,7 +96,8 @@ def signup(request):
         profile_form = ProfileForm()
     return render(request, 'registration/signup.html', {
         'user_form': user_form,
-        'profile_form': profile_form
+        'profile_form': profile_form,
+        'college_list': colleges
     })
 
 # class SignUp(generic.CreateView):
