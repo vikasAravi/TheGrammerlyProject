@@ -1,14 +1,6 @@
 {% include "header.html" %}
 {% load static %}
-<link rel="stylesheet" href="{% static "answer.css"%}"/>
 <style>
-    #hi{
-        font-weight: bolder;
-    }
-    #hello{
-       font-style: italic;
-       font-weight: bold;
-    }
     .userattempt {
         text-decoration: underline;
         cursor: pointer;
@@ -17,14 +9,40 @@
         font-weight: bold;
     }
 
-    .table {
-        font-size:1.2em;
+    .topcontrol {
+        background-color: #cccccc;
+        padding-top:20px;
+        margin-bottom: 20px;
     }
 
+    .stats {
+        margin-top:20px;
+    }
 </style>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
+
 <div class="masthead text-center">
-    <h1>Test Takers Performance</h1>
+    <div class="container-fluid topcontrol">
+        <h2>Test Takers Performance</h2>
+        <div class="row">
+        <div class="col-sm-8 col-md-8">
+            <canvas id="perfChart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-sm-4 col-md-4">
+            <p>Filter by score range</p>
+            <form action="/analytics/" class="form-inline justify-content-center" role="form" method="POST">
+                {% csrf_token %}
+                <label for="minscore" class="mr-sm-2" >from</label>
+                <input type="number" step="1" min="0" max="{{attrs.maxscore}}" value="{{attrs.minscore}}" id="minscore" name="minscore" class="form-control  mr-sm-2"/>
+                <label for="maxscore" class="mr-sm-2">to</label>
+                <input type="number" step="1" min="{{attrs.minscore}}" max="10" value="{{attrs.maxscore}}" id="maxscore" name="maxscore" class="form-control mr-sm-2"/>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <!--TODO: filter by branch etc.-->
+            </form>
+            <p class="stats">Total Test Takers: <span id="takercount">--</span></p>
+        </div>
+    </div>
+</div>
 <div class="container">
    
 <table id="leaderboard" class="table">
@@ -69,7 +87,15 @@
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>  
     <script>
         $(document).ready(function() {
-            $('#leaderboard').DataTable({
+
+            var getcolor = function(branch) {
+                //TODO return based on branch later
+                var r = Math.floor((Math.random() * 256));
+                var g = Math.floor((Math.random() * 256));
+                var b = Math.floor((Math.random() * 256));
+                return 'rgba('+r+', '+g+', '+b+', 0.2)';
+            }
+            var mytable = $('#leaderboard').DataTable({
                 lengthMenu: [
                     [ 25, 50, 100, -1 ],
                     [ '25', '50', '100', 'All' ]
@@ -78,7 +104,56 @@
                     'pageLength'
                 ]
             });
+            
+
+            var makechart = function() {
+                var data = mytable.rows().data();
+            $('#takercount').text(data.length);
+            // create chart from data here
+            var chartdata = new Array(data.length);
+            var colordata = new Array(data.length);
+            var labels = new Array(data.length);
+            for(var i=0; i<data.length; i++) {
+                chartdata[i] = data[i][1]; //TODO: change index when more parameters come
+                colordata[i] = getcolor(0); //TODO, should be based on the branch
+                labels[i] = data[i][0];
+            }
+                // sort the data by avg score
+            var ctx = document.getElementById("perfChart").getContext('2d');
+            var perfChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels:labels,
+                    datasets: [{
+                        data: chartdata,
+                        backgroundColor: colordata
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: { display: false },
+                    scales: {
+                        yAxes: [{
+                            ticks: { min: 0, max: 10 },
+                            scaleLabel: { display: true, labelString: 'score' }
+                        }],
+                        xAxes: [{
+                            gridLines: { display: false },
+                            ticks: { display: false }
+                        }]
+                    }
+                }
+            });
+            }
+
+            makechart();
+            mytable.on('order.dt', function() {
+                makechart();
+            })
+            
         } );
+
         //make ajax call
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>

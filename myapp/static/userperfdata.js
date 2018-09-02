@@ -27,6 +27,14 @@ $.ajaxSetup({
 uuid=0
 
 $(function() {
+    $('#minscore').change(function() {
+        $('#maxscore').attr("min", $(this).val())
+    });
+
+    $('#maxscore').change(function() {
+        $('#minscore').attr("max", $(this).val())
+    });
+
     $('#modChart').on('shown.bs.modal',function(event){
         // Chart initialisieren
         var modal = $(this);

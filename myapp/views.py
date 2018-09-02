@@ -250,12 +250,18 @@ def getuserperfdata(request, uid):
 @login_required(login_url="login")
 def getallusersummary(request):
     if request.user.is_staff:
-        qs = Answer.objects.filter(question__user_id=request.user.id, score__gt = 4).select_related().values("user_id").annotate(Avg('score'), Count('question'), Max('starttime'))
+        minscore = 0
+        maxscore = 10
+        if request.method=="POST":
+            minscore = request.POST["minscore"]
+            maxscore = request.POST["maxscore"]
+
+        qs = Answer.objects.filter(question__user_id=request.user.id, score__gte = minscore, score__lte = maxscore).select_related().values("user_id").annotate(Avg('score'), Count('question'), Max('starttime'))
         results = []
         for result in qs:
             u = User.objects.get(pk=result['user_id'])
             results.append({"userid":result['user_id'], "username":u.username, "avgscore":result['score__avg'], "count":result['question__count'], "lastattempted":result['starttime__max']})
-        
-        return render(request, template_name="getallusersummary.html", context={"results":results})
+        attrs = {"minscore":minscore, "maxscore":maxscore}
+        return render(request, template_name="getallusersummary.html", context={"results":results, "attrs":attrs})
     else:
         return redirect('homepage')

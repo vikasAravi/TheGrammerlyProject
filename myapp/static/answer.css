@@ -36,13 +36,17 @@ body{
     text-align: center;
 }
 
+.modal-lg {
+    max-width:80% !important;
+}
+
 #res{
    display:none;
    margin:0 10%;
 }
 
 #essay {
-    display:none;
+    text-align: justify;
 }
 
 pre {
@@ -69,10 +73,6 @@ span.grammar {
 
 span.correct {
     color:#444444;
-}
-
-div p{
-    margin-left: 30px;
 }
 
 .hidden {

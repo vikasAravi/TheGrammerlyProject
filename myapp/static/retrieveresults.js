@@ -3,7 +3,7 @@ var getResults = function (uid) {
     var qid = window.location.href;
     qid = qid.substring(qid.lastIndexOf('/')+1);
     var url = "/getresult/";
-    $('#username').text(qid)
+    $('#username').text(uid);
     console.log(url);
     var he = highlightErrors;
     $.post(url, {"uid":uid, "qid":qid}, function (data) {

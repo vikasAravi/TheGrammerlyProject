@@ -297,7 +297,7 @@ img::-moz-selection {
   padding: 1rem 2rem;
 }
 
-.btn-primary {
+/* .btn-primary {
   background-color: #F05F40;
   border-color: #F05F40;
 }
@@ -305,11 +305,11 @@ img::-moz-selection {
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
   color: #fff;
   background-color: #ee4b28 !important;
-}
+} */
 
-.btn-primary:active, .btn-primary:focus {
+/* .btn-primary:active, .btn-primary:focus {
   box-shadow: 0 0 0 0.2rem rgba(240, 95, 64, 0.5) !important;
-}
+} */
 
 .navbar-brand span{
     padding-left: 15px;
