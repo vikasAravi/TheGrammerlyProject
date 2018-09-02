@@ -1,15 +1,12 @@
 {% include "header.html" %}
 {% load static %}
-<tag autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
 <link rel="stylesheet" href="{% static "answer.css"%}"/>
-
-<body>
     <div id="loader">
         <div class="loader">
             
         </div>
     </div>
-    <p id="myqid" class="hidden" style="display:none;">{{question.id}}</p>
+    <p id="myqid" class="hidden" >{{question.id}}</p>
     <p id="starttime" class="hidden">{{starttime}}</p>
     
     <div class="container">
@@ -19,7 +16,8 @@
         </div>
         <div class="row">
             <div class="col-sm-1 col-md-1"></div>
-            <textarea class="col-sm-10 col-md-10" id="id_answer" rows="10" cols="120" placeholder="Write your essay here"></textarea>
+            <textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+             class="col-sm-10 col-md-10" id="id_answer" rows="10" cols="120" placeholder="Write your essay here"></textarea>
 
             <p class="col-sm-10 col-md-10" id='essay'></p>
             <div class="col-sm-1 col-md-1"></div>

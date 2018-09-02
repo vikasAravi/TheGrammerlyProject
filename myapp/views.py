@@ -202,11 +202,13 @@ def leaderboard(request, qid):
 
 @login_required(login_url="login")
 def getuserattemptdata(request):
-    a =  Answer.objects.filter(user_id=request.user.id).order_by('starttime').only("score")
+    a =  Answer.objects.filter(user_id=request.user.id).order_by('starttime').only("score", "starttime")
     data = []
+    labels = []
     for x in a:
         data.append(x.score)
-    return JsonResponse({"data":data})
+        labels.append(x.starttime)
+    return JsonResponse({"data":data, "labels":labels})
 
 @login_required(login_url="login")
 def getuserperformance(request):
@@ -236,14 +238,15 @@ def getuserperformance(request):
 @login_required(login_url="login")
 def getuserperfdata(request, uid):
     if request.user.is_staff:
-        a = Answer.objects.filter(question__user_id=request.user.id, user_id=uid).order_by('starttime').only('score')
+        a = Answer.objects.filter(question__user_id=request.user.id, user_id=uid).order_by('starttime').only('score', 'starttime')
         data = []
+        labels = []
         for x in a:
             data.append(x.score)
-        print(data)
-        return JsonResponse({"data":data})
+            labels.append(x.starttime)
+        return JsonResponse({"data":data, "labels":labels})
     else:
-        return JsonResponse({"data":[]})
+        return JsonResponse({"data":[], "labels":[]})
 
     
 

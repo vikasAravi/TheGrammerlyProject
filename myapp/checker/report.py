@@ -1,6 +1,6 @@
 import requests
 from .error import Error
-from nltk.corpus import stopwords
+#from nltk.corpus import stopwords
 import re
 languagecheckurl = 'http://localhost:8082/v2/check'
 class Report:
@@ -12,7 +12,7 @@ class Report:
         self.errors = [Error(m) for m in response.json()['matches']]
         self.words = re.sub(r"[.,?!;():\"\']", " ", essay).split()
         self.wordCount = len(self.words)
-        stop_words = set(stopwords.words('english'))
+        #stop_words = set(stopwords.words('english'))
         tot = 0
         
         self.avg_sentences = len(essay.split('.'))

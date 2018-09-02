@@ -23,9 +23,11 @@
     }
 </style>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
+
 <div class="masthead text-center">
+        
  <div class="container-fluid topheading">
-        <h1>Your Performance</h1> 
+        <h2>Your Performance</h2> 
         {% include "userperformancechart.html" %}
 </div>
 <div class="container">
@@ -57,7 +59,7 @@
     </tbody>
   </table>       
 </div>
-    <div class="modal fade" id="myModal" role="dialog">
+<div class="modal fade" id="myModal" role="dialog">
         <div class="modal-dialog modal-lg">
         
             <!-- Modal content-->
@@ -73,6 +75,7 @@
         </div>
     </div>
 </div>
+<div style="height:20px;"></div>
     {% include "footer.html" %}
     <script src="{% static "displayresults.js" %}"></script>
     <script src="{% static "retrieveuserresults.js" %}"></script>

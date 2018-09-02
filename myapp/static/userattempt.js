@@ -2,6 +2,7 @@
 var wordlimit = 150;
 
 var submitEssay = function (e) {
+    $( window ).unload(null);
     //TODO: decide about word limit
     clearInterval(timer);
     $('#loader').show();
@@ -78,14 +79,8 @@ function wordCount(val) {
     };
 }
 
-window.onbeforeunload = function (e) {
-    return ''
-}
-
 var textarea;
 var result;
-
-
 
 
 $(function() {
@@ -106,4 +101,8 @@ $(function() {
         }
         result.innerHTML = f;
     }, false);
+
+    $( window ).unload(function() {
+        return 'Think before you leave! You will lose all your content and you will have to re-write again.';
+    });
 })

@@ -45,6 +45,7 @@ $(function() {
             var myBarChart = new Chart(ctx, {
                 type: 'line',
                 data: {
+                    labels:data['labels'],
                     datasets: [{
                         data: data['data']
                     }]
@@ -67,10 +68,8 @@ $(function() {
                             }
                         }],
                         xAxes: [{
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'time'
-                            }
+                            gridLines: { display: false },
+                            ticks: { display: false }
                         }]
                     }
                 }
