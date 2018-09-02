@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from datetime import datetime
 # Create your models here.
 
-
 class Question(models.Model):
     question = models.CharField(max_length = 500)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -12,7 +11,8 @@ class Question(models.Model):
     attempts_allowed = models.IntegerField(default=1)
     date_created = models.DateField(default=datetime.now)
     time_limit = models.IntegerField(default=30)
-    # should we add timelimit and wordcount to this?
+    # to add keywords, picture essay image, tags, question type (essay, picture essay, connect phrases, use words etc.)
+    # would need separate checking algorithm for each
 
     def __str__(self):
         return "{}".format(self.question)

@@ -228,6 +228,9 @@ def getuserattemptdata(request):
 
 @login_required(login_url="login")
 def getuserperformance(request):
+    #TODO: calculate rank of user overall and also branchwise.
+    # should we consider all essays or only with users who attempted same essays
+    # should we be comparing progress trends as well. What to maintain in the cube?
     score = Answer.objects.filter(user_id = request.user.id).aggregate(Avg('score'))
     avg_score = score['score__avg']
     no_of_attempts = Answer.objects.filter(user_id = request.user.id).count()

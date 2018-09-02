@@ -31,10 +31,10 @@
             {% else %}
             <div class="col-lg-8 mx-auto">
                 <p class="text-faded mb-5">Take a test if you know the test code or practice on some great essay topics. At any point you can see your performance and improve.</p>
-                <div class="input-group">
+                <div class="input-group text-center" style="width:310px; margin: 0 auto;">
                 <input type="text" id="code" class="form-control" placeholder="test code">
                 <span class="input-group-btn" >
-                    <button id="go" class="btn btn-success" style="border-radius:0 5px 5px 0;" type="button" onclick="verifyandgo();">Take Test Now</button>
+                    <button id="go" class="btn btn-success" style="border-radius:0 5px 5px 0; height:50px;" type="button" onclick="verifyandgo();">Go</button>
                 </span>
                 </div>
                 <a href="{% url "practice" %}"><button class="btn btn-primary mt-5 btn-xl">Practice</button></a>
