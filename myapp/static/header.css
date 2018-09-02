@@ -198,7 +198,6 @@ img::-moz-selection {
 
 @media (min-width: 992px) {
   .masthead {
-    height: 100vh;
     min-height: 650px;
     padding-top: 0;
     padding-bottom: 0;

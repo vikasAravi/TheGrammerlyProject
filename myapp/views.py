@@ -66,8 +66,24 @@ def questionmanager(request):
 @login_required(login_url="login")
 def practice(request):
     context = dict()
-    context['object_list'] = Question.objects.filter(user_id = 1)
-    return render(request, template_name = 'practice.html', context=context)
+    results = []
+    questions = Question.objects.filter(user_id = 1)
+    for q in questions:
+        a = list(Answer.objects.filter(user_id=request.user.id,question_id=q.id))
+        s = 0
+        n = 0
+        avg = 0
+        for x in a:
+            s += x.score
+            n += 1
+        if n>0:
+            avg = s/n
+        if len(a) < q.attempts_allowed:
+            results.append((q, True, avg, n, q.attempts_allowed))
+        else:
+            
+            results.append((q, False, avg, n, q.attempts_allowed))
+    return render(request, template_name = 'practice.html', context={"questions":results})
 
 @login_required(login_url="login")
 def main_view(request):

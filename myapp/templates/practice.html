@@ -1,26 +1,85 @@
 {% load static %}
 {% load bootstrap4 %}
 {% include 'header.html' %}
-
+<style>
+  .attempts {
+    font-weight: bold;
+  }
+  #questions_wrapper {
+     margin-bottom: 30px;
+ }
+ .topheading {
+        text-align: center;
+        padding:30px;
+        background-color: #dddddd;
+        margin-bottom: 30px;
+    }
+  #count, #unattemptedcount {
+    padding:0 10px;
+  }
+  #attemptedcount {
+    padding:0 10px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+  }
+</style>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
 <div class="masthead text-center">
-    <h1>Practice Questions</h1>
-    <div class="container mt-4">
-        <div class="row">
-          <div class="col-md-12">
-    <table class="table table-striped">
+    <div class="container-fluid topheading">
+        <h2>Practice Questions</h2>
+        <p><span id="count">Total Questions: </span>
+          <span id="attemptedcount">Attempted: </span>
+          <span id="unattemptedcount">Not Attempted: </span>
+        </p> 
+    </div>
+    <div class="container">
+    <table id="questions" class="table table-striped">
+      <thead>
+        <th>Question</th>
+        <th>Attempted</th>
+        <th>Average Score</th>
+        <th>Action</th>
+      </thead>
         <tbody>     
-{% for question in object_list %}
+{% for q in questions %}
   <tr>
-    <td class="lead">{{ question }}</td>
-    <td><a href="{% url 'attempt' question.code %}"><button class="btn btn-success my-auto">attempt</button></a></td>
+    <td class="lead">{{ q.0.question }}</td>
+    <td>{{q.3}} of {{q.4}}</td>
+    <td>{{q.2}}</td>
+    {% if q.1 %}
+    <td><a href="{% url 'attempt' q.0.code %}"><button class="btn btn-primary my-auto">attempt</button></a></td>
+    {% else %}
+    <td><button disabled class="btn btn-link">done</button></td>
+    {% endif %}
   </tr>
 {% endfor %}
 </tbody>
 </table>
 </div>
 </div>
-</div>
-</div>
     {% include 'footer.html' %}
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var q = $('#questions').DataTable({
+                    lengthMenu: [
+                        [ 25, 50, 100, -1 ],
+                        [ '25', '50', '100', 'All' ]
+                    ],
+                    buttons: [
+                        'pageLength'
+                    ]
+                });
+            
+            var data = q.data();
+            $('#count').text($('#count').text() + " " + data.length);
+            var a = 0;
+            for (var i=0; i<data.length; i++) {
+              if(data[i][1][0]=='0') a++;
+            }
+            $('#attemptedcount').text($('#attemptedcount').text() + " " + (data.length-a));
+            $('#unattemptedcount').text($('#unattemptedcount').text() + " " + a);
+        } );
+    </script>
 </body>
 </html>
