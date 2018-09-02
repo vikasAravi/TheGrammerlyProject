@@ -7,7 +7,9 @@
     height:40px;
  } 
  .qcreate {
-     font-weight: bold;
+     font-size:1.5em;
+     margin:0;
+     padding:0;
  }  
  #qform {
      margin-bottom:30px;
@@ -15,15 +17,25 @@
  #questions_wrapper {
      margin-bottom: 30px;
  }
+ .topheading {
+        text-align: center;
+        padding:30px;
+        background-color: #dddddd;
+        margin-bottom: 30px;
+    }
 </style>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.css"/>
-<h1 style="text-align: center; margin:10px auto;">Question Manager</h1>
+
+<div class="container-fluid topheading">
+        <h1 style="text-align: center; margin:10px auto;">Question Manager</h1>
+        <p>Total Questions: <span id="count"></span></p> 
+</div>
 <div class="container text-center">
-    <div id="qform" class="card mb-12">
-        <div class="card-header" id="h{{question.id}}" role="button" data-toggle="collapse" data-target="#c{{question.id}}" aria-expanded="true" aria-controls="c{{question.id}}">
-            <p class="lead qcreate">Create a new question</p>
+    <div id="qform" class="card mb-12 bg-dark text-white">
+        <div class="card-header" id="createquestion" role="button" data-toggle="collapse" data-target="#createquestionform" aria-expanded="true" aria-controls="createquestionform">
+            <p class="qcreate">Create a new question</p>
         </div>
-        <div id="c{{question.id}}" class="collapse" aria-labelledby="h{{question.id}}" data-parent="#accordion">
+        <div id="createquestionform" class="collapse" aria-labelledby="createquestion" data-parent="#accordion">
             <div class="card-body">
                 <form role="form" method="post">
                     {% csrf_token %}
@@ -55,6 +67,7 @@
             <th>Question</th>
             <th>Code</th>
             <th>Date Created</th>
+            <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -64,9 +77,9 @@
             <td>{{question.code}}</td>
             <td>{{question.date_created}}</td>
             <td>
-                    <a href="{% url 'leaderboard' question.id %}"><button class="btn btn-primary">Leaderboard</button></a>
+                    <a href="{% url 'leaderboard' question.id %}"><button class="btn btn-primary btn-sm">Leaderboard</button></a>
                     <!-- <a href="{% url 'delete' question.id %}"><button class="btn btn-danger">Delete</button></a> -->
-                    <a href="{% url 'updatequestion' question.id %}"><button class="btn btn-link">Edit</button></a>
+                    <a href="{% url 'updatequestion' question.id %}"><button class="btn btn-link btn-sm">Edit</button></a>
             </td>
             </tr>
             {% endfor %}
@@ -78,7 +91,7 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/datatables.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#questions').DataTable({
+        var q = $('#questions').DataTable({
                 lengthMenu: [
                     [ 25, 50, 100, -1 ],
                     [ '25', '50', '100', 'All' ]
@@ -87,6 +100,7 @@
                     'pageLength'
                 ]
             });
+        $('#count').text(q.data().length);
     } );
 </script>
 </body>

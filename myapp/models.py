@@ -8,7 +8,7 @@ class Question(models.Model):
     question = models.CharField(max_length = 500)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.CharField(max_length = 8,unique = True)
-    word_limit = models.IntegerField(default=150)
+    word_limit = models.IntegerField(default=300)
     attempts_allowed = models.IntegerField(default=1)
     date_created = models.DateField(default=datetime.now)
     time_limit = models.IntegerField(default=30)
