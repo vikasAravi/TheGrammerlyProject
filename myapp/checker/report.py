@@ -56,6 +56,13 @@ class Report:
         self.score -= ((self.spellingErrorCount * 0.25) + (self.grammarErrorCount * 0.25)) + self.sentencequalitypenalty + self.wordqualitypenalty + self.wordlimitpenalty
         if self.score < 0:
             self.score = 0
+        
+        # round'em up to 2 decimal places
+        self.score = round(self.score,2)
+        self.wordlimitpenalty = round(self.wordlimitpenalty, 2)
+        self.wordqualitypenalty = round(self.wordqualitypenalty, 2)
+        self.sentencequalitypenalty = round(self.sentencequalitypenalty, 2)
+
     def reprJSON(self):
         return dict(answer=self.essay, score = self.score,errors = [e.reprJSON() for e in self.errors],
         wordCount = self.wordCount, spellingErrorCount = self.spellingErrorCount, wordlimitpenalty=self.wordlimitpenalty,

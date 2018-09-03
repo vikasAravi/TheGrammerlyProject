@@ -22,7 +22,8 @@
               </h1>
               <hr>
             </div>
-            {% if user.is_staff %}
+            {% if user.is_authenticated %}
+            {% if perms.myapp.create_test %}
             <div class="col-lg-8 mx-auto">
                 <p class="text-faded mb-5">Create new questions or see attempts made for your questions. You can also see overall user performance for all questions thay have attempted from your question bank.</p>
                 <a href="{% url "questionmanager" %}"><button class="btn btn-primary mt-5 btn-xl">Manage Questions</button></a>
@@ -32,7 +33,7 @@
             <div class="col-lg-8 mx-auto">
                 <p class="text-faded mb-5">Take a test if you know the test code or practice on some great essay topics. At any point you can see your performance and improve.</p>
                 <div class="input-group text-center" style="width:310px; margin: 0 auto;">
-                <input type="text" id="code" class="form-control" placeholder="test code">
+                <input type="text" id="code" class="form-control" placeholder="Enter question code">
                 <span class="input-group-btn" >
                     <button id="go" class="btn btn-success" style="border-radius:0 5px 5px 0; height:50px;" type="button" onclick="verifyandgo();">Go</button>
                 </span>
@@ -42,14 +43,20 @@
             </div>
             
             {% endif %}
-            
+            {% else %}
+            <div class="col-lg-8 mx-auto">
+                    <p class="text-faded mb-5">Use one of the optione below to access</p>
+                    <a href="{% url "login" %}"><button class="btn btn-primary mt-5 btn-xl">Login</button></a>
+                    <a href="{% url "signup" %}"><button class="btn btn-success mt-5 btn-xl">Signup</button></a>
+                </div>
+            {% endif %}
           </div>
         </div>
       </header>
 
 {% include "footer.html" %}
 
-{% if not user.is_staff %}
+{% if not perms.myapp.create_test %}
 <script>
     function getCookie(name) {
         var cookieValue = null;

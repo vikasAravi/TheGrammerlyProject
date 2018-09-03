@@ -21,3 +21,8 @@ urlpatterns = [
     path('', include('myapp.urls')),
     # path('',include('myapp.urls'))
 ]
+
+handler404 = 'myapp.views.not_found'
+handler500 = 'myapp.views.server_error'
+handler403 = 'myapp.views.permission_denied'
+handler400 = 'myapp.views.bad_request'

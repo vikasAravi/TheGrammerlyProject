@@ -24,6 +24,11 @@ class Profile(models.Model):
     college_id = models.CharField(max_length=20, blank=False)
     branch_of_study = models.CharField(max_length=3, blank=False, choices=BRANCH_CHOICES)
     name = models.CharField(max_length=100, blank=False)
+    class Meta:
+     permissions = (
+           ("take_test", "Can take tests"),
+           ("create_test", "Can create tests"),
+     )
 
 
 @receiver(post_save, sender=User)

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from simplejson import dumps
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.views.generic import ListView
 from django.urls import reverse_lazy
 from django.db.models import Avg, Count, Max
@@ -100,39 +100,6 @@ def signup(request):
         'college_list': colleges
     })
 
-# class SignUp(generic.CreateView):
-#     form_class = UserForm
-#     success_url = reverse_lazy('login')
-#     template_name = 'registration/signup.html'
-
-#     def post(self,request, *args, **kwargs):
-#         user_form = UserForm(request.POST)
-#         profile_form = ProfileForm(request.POST)
-#         if user_form.is_valid() and profile_form.is_valid():
-#             user = user_form.save(commit = False)
-#             user.is_active = False
-#             user.save()
-#             profile_form.save()
-#             current_site = get_current_site(request)
-#             mail_subject = 'Activate your grammar check account.'
-#             uid = urlsafe_base64_encode(force_bytes(user.pk))
-#             tok = account_activation_token.make_token(user)          
-#             message = render_to_string('acc_active_email.html', {
-#                 'user': user,
-#                 'domain': current_site.domain,
-#                 'uid':uid.decode('utf-8'),
-#                 'token':tok,
-#             })
-#             to_email = user_form.cleaned_data.get('email')
-#             email = EmailMessage(
-#                         mail_subject, message, to=[to_email]
-#             )
-#             email.send()
-#             #TODO:Create a nice page for confirmation and use that
-#             return HttpResponse('Please confirm your email address to complete the registration')
-#         else:
-#             return render(request,'registration/signup.html',{'user_form': user_form, 'profile_form': profile_form})
-
 def activate(request, uidb64, token, backend='django.contrib.auth.backends.ModelBackend'):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
@@ -148,30 +115,40 @@ def activate(request, uidb64, token, backend='django.contrib.auth.backends.Model
     else:
         return render(request, 'registration/message.html', {"message":'Activation link is invalid!'})
 
+def not_found(request):
+    return render(request, 'errors/not_found.html')
+
+def server_error(request):
+    return render(request, 'errors/server_error.html')
+
+def permission_denied(request):
+    return render(request, 'errors/permission_denied.html')
+
+def bad_request(request):
+    return render(request, 'errors/bad_request.html')
+
 @login_required(login_url="login")
+@permission_required('myapp.create_test')
 def questionmanager(request):
     user = request.user
-    if user.is_staff:
-        context = dict()
-        if request.method == "POST":
-            form = QuestionForm(request.POST)
+    context = dict()
+    if request.method == "POST":
+        form = QuestionForm(request.POST)
+        code = ''.join(random.choices(string.ascii_lowercase + string.ascii_uppercase + string.digits, k=8))
+        c = Question.objects.filter(code=code)
+        while len(list(c))>0:
             code = ''.join(random.choices(string.ascii_lowercase + string.ascii_uppercase + string.digits, k=8))
             c = Question.objects.filter(code=code)
-            while len(list(c))>0:
-                code = ''.join(random.choices(string.ascii_lowercase + string.ascii_uppercase + string.digits, k=8))
-                c = Question.objects.filter(code=code)
-            if form.is_valid():
-                question = form.save(commit = False)
-                question.user = request.user
-                question.code = code
-                question.save()
-        else:
-            form = QuestionForm()
-        context['form'] = form
-        context['object_list'] = Question.objects.filter(user_id=request.user.id)
-        return render(request, template_name = 'questionmanager.html', context=context)
+        if form.is_valid():
+            question = form.save(commit = False)
+            question.user = request.user
+            question.code = code
+            question.save()
     else:
-        return redirect('homepage')
+        form = QuestionForm()
+    context['form'] = form
+    context['object_list'] = Question.objects.filter(user_id=request.user.id)
+    return render(request, template_name = 'questionmanager.html', context=context)
 
 @login_required(login_url="login")
 def practice(request):
@@ -195,7 +172,6 @@ def practice(request):
             results.append((q, False, avg, n, q.attempts_allowed))
     return render(request, template_name = 'practice.html', context={"questions":results})
 
-@login_required(login_url="login")
 def main_view(request):
     return render(request,template_name="homepage.html", context={"user": request.user})
 
@@ -235,8 +211,9 @@ def getanswerforuser(request):
         return HttpResponse(qs.Json)
 
 @login_required(login_url="login")
+@permission_required('myapp.create_test')
 def get_results(request):
-    if request.user.is_staff and request.method == "POST":
+    if request.method == "POST":
         uid = request.POST['uid']
         qid = request.POST['qid']
         #print(uid, qid)
@@ -269,17 +246,17 @@ def fetch_results(request):
         return HttpResponse(json_object)
 
 @login_required(login_url="login")
+@permission_required('myapp.create_test')
 def updatequestion(request, qid):
-    if request.user.is_staff:
-        form = QuestionForm(request.POST)
-        q = Question.objects.get(pk = qid)
-        return render(request,"editquestion.html",{'form':form})
+    form = QuestionForm(request.POST)
+    q = Question.objects.get(pk = qid)
+    return render(request,"editquestion.html",{'form':form})
         
 @login_required(login_url="login")
+@permission_required('myapp.create_test')
 def getquestiondata(request, qid):
-    if request.user.is_staff:
-        obj = Question.objects.get(pk = qid)
-        return JsonResponse({"wordlimit":obj.word_limit, "timelimit":obj.time_limit, "attempts":obj.attempts})
+    obj = Question.objects.get(pk = qid)
+    return JsonResponse({"wordlimit":obj.word_limit, "timelimit":obj.time_limit, "attempts":obj.attempts})
 
 class EditQuestion(PermissionRequiredMixin,LoginRequiredMixin,generic.UpdateView):
     login_url = '/login/'
@@ -299,32 +276,28 @@ class EditQuestion(PermissionRequiredMixin,LoginRequiredMixin,generic.UpdateView
 
 
 @login_required(login_url="login")
+@permission_required('myapp.create_test')
 def delete_question(request, qid):
-    if request.user.is_staff:
-        question = Question.objects.get(pk=qid)
-        # add case where user can del question which is created by him only
-        if question.user_id != request.user.id:
-            return HttpResponse("Not allowed")
-        else:
-            question.delete()
-            return redirect('questionmanager')
+    question = Question.objects.get(pk=qid)
+    # add case where user can del question which is created by him only
+    if question.user_id != request.user.id:
+        return HttpResponse("Not allowed")
     else:
-        return redirect('homepage')
+        question.delete()
+        return redirect('questionmanager')
 
 @login_required(login_url="login")
+@permission_required('myapp.create_test')
 def leaderboard(request, qid):
-    if request.user.is_staff:
-        qs = Answer.objects.filter(question_id=qid).order_by('-score').only("user", "score", "starttime", "endtime")
-        q = Question.objects.get(pk=qid).question
-        results = []
-        if qs:
-            rank = 1
-            for attempt in qs:
-                results.append((attempt.user, rank, round(attempt.score,2), datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M")))
-                rank += 1
-        return render(request, template_name="leaderboard.html", context={"results": results, "question":q})
-    else:
-        return redirect('homepage')
+    qs = Answer.objects.filter(question_id=qid).order_by('-score').only("user", "score", "starttime", "endtime")
+    q = Question.objects.get(pk=qid).question
+    results = []
+    if qs:
+        rank = 1
+        for attempt in qs:
+            results.append((attempt.user, rank, round(attempt.score,2), datetime.strftime(attempt.starttime, "%d-%m-%Y"), datetime.strftime(attempt.starttime, "%H:%M"), datetime.strftime(attempt.endtime, "%H:%M")))
+            rank += 1
+    return render(request, template_name="leaderboard.html", context={"results": results, "question":q})
 
 @login_required(login_url="login")
 def getuserattemptdata(request):
@@ -365,35 +338,31 @@ def getuserperformance(request):
     return render(request, template_name="userperformance.html", context={"results": results, "user":request.user, "avgscore":round(avgscore,2), "totalattempts":totalattempts, "lastattempted":lastattempted})
 
 @login_required(login_url="login")
+@permission_required('myapp.create_test')
 def getuserperfdata(request, uid):
-    if request.user.is_staff:
-        a = Answer.objects.filter(question__user_id=request.user.id, user_id=uid).order_by('starttime').only('score', 'starttime')
-        data = []
-        labels = []
-        for x in a:
-            data.append(round(x.score,2))
-            labels.append(x.starttime)
-        return JsonResponse({"data":data, "labels":labels})
-    else:
-        return JsonResponse({"data":[], "labels":[]})
+    a = Answer.objects.filter(question__user_id=request.user.id, user_id=uid).order_by('starttime').only('score', 'starttime')
+    data = []
+    labels = []
+    for x in a:
+        data.append(round(x.score,2))
+        labels.append(x.starttime)
+    return JsonResponse({"data":data, "labels":labels})
 
     
 
 @login_required(login_url="login")
+@permission_required('myapp.create_test')
 def getallusersummary(request):
-    if request.user.is_staff:
-        minscore = 0
-        maxscore = 10
-        if request.method=="POST":
-            minscore = request.POST["minscore"]
-            maxscore = request.POST["maxscore"]
+    minscore = 0
+    maxscore = 10
+    if request.method=="POST":
+        minscore = request.POST["minscore"]
+        maxscore = request.POST["maxscore"]
 
-        qs = Answer.objects.filter(question__user_id=request.user.id, score__gte = minscore, score__lte = maxscore).select_related().values("user_id").annotate(Avg('score'), Count('question'), Max('starttime'))
-        results = []
-        for result in qs:
-            u = User.objects.get(pk=result['user_id'])
-            results.append({"userid":result['user_id'], "username":u.username, "profile":u.profile, "avgscore":round(result['score__avg'],2), "count":result['question__count'], "lastattempted":result['starttime__max']})
-        attrs = {"minscore":minscore, "maxscore":maxscore}
-        return render(request, template_name="getallusersummary.html", context={"results":results, "attrs":attrs})
-    else:
-        return redirect('homepage')
+    qs = Answer.objects.filter(question__user_id=request.user.id, score__gte = minscore, score__lte = maxscore).select_related().values("user_id").annotate(Avg('score'), Count('question'), Max('starttime'))
+    results = []
+    for result in qs:
+        u = User.objects.get(pk=result['user_id'])
+        results.append({"userid":result['user_id'], "username":u.username, "profile":u.profile, "avgscore":round(result['score__avg'],2), "count":result['question__count'], "lastattempted":result['starttime__max']})
+    attrs = {"minscore":minscore, "maxscore":maxscore}
+    return render(request, template_name="getallusersummary.html", context={"results":results, "attrs":attrs})

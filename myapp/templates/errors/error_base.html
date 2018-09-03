@@ -1,0 +1,17 @@
+{% load bootstrap4 %}
+{% load static %}
+{% include "header.html" %}
+
+<div class="container masthead text-center" style="margin:30px auto;">
+<div class="row">
+    <div class="col-sm-12 col-md-6 offset-md-3">
+    <div class="card">
+        {% block content %} Override here {% endblock %}
+    </div>
+    </div>
+</div>
+</div>
+
+{% include "footer.html" %}
+</body>
+</html>
